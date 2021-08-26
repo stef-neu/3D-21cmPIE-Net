@@ -1,0 +1,9 @@
+name: 3D-21cmPIE-Net
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.6
+  - numpy
+  - matplotlib
+  - tensorflow>2.0
+  - py21cmfast
