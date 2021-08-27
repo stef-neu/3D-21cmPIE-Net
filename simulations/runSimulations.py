@@ -6,7 +6,7 @@ import py21cmfast as p21c
 from py21cmfast import cache_tools
 
 o = optparse.OptionParser()
-o.set_usage('calc_sense.py [options] [N_runs]')
+o.set_usage('runSimulations.py [options] [N_runs]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="Produces an astro-only dataset in a CDM universe by only sampling LX,E0,Tvir and zeta.")
