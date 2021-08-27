@@ -4,12 +4,13 @@ import functools, os
 
 class Plotting():
     def __init__(self,model,test_ds,astroOnly=False,load=False):
-        # Setup
+        # Define parameter names, ranges and latex code
         if astroOnly:
             self.parameters=[["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
         else:
             self.parameters=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
 
+        # Load saved test predictions and labels from a previous run
         if load:
             with np.load("output/TestValues.npz") as data:
                 self.test_pred=data["test_pred"]
@@ -31,7 +32,7 @@ class Plotting():
 
     def calculateR2(self):
         for para in range(len(self.parameters)):
-            # Calculate the R2-score
+            # Calculate the R2-score for each parameter
             average=sum(self.test_labels[:,para])/len(self.test_labels[:,para])
             top=[(x-y)**2 for x, y in zip(self.test_labels[:,para],self.test_pred[:,para])]
             bottom=[(x-average)**2 for x in self.test_labels[:,para]]
