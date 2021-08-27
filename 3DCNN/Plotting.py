@@ -41,7 +41,7 @@ class Plotting():
     def plot(self,path="output/scatterPlots"):
         os.makedirs(path, exist_ok=True)
         for para in range(len(self.parameters)):
-            # Go back from the [0,1] to the initial parameter ranges
+            # Go back from [0,1] to the initial parameter ranges
             self.test_pred[:,para]=[x*(self.parameters[para][2]-self.parameters[para][1])+self.parameters[para][1] for x in self.test_pred[:,para]]
             self.test_labels[:,para]=[x*(self.parameters[para][2]-self.parameters[para][1])+self.parameters[para][1] for x in self.test_labels[:,para]]
             fig,ax = plt.subplots()
