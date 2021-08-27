@@ -26,7 +26,7 @@ class Model():
         x = layers.Dense(128, activation="relu")(x)
         outputs = layers.Dense(6, activation="sigmoid")(x)
 
-        # Defining and compiling our model
+        # Define and compiling our model
         self.model = keras.Model(inputs=self.inputs, outputs=outputs, name="3D_21cmPIE-Net")
         self.model.summary()     
         self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=4e-4,epsilon=1e-7,amsgrad=True),
@@ -34,6 +34,7 @@ class Model():
         return self.model
 
     def fitModel(self, training_data, test_data, **kwargs):
+        # Train the given dataset and calculate test scores
         self.model.fit(training_data,**kwargs)
         print("Evaluating test scores")
         test_scores = self.model.evaluate(test_data)
