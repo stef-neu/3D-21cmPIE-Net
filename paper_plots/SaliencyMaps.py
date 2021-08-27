@@ -11,12 +11,14 @@ from py21cmfast import plotting
 from tf_keras_vis.saliency import Saliency
 import os
 
+# Change the sigmoid activation of the last layer to a linear one. This is required for creating saliency maps
 def model_modifier(m):
     m.layers[-1].activation = tf.keras.activations.linear
     return m
 
-# Plot the saliency maps over the light-cones. Axis scales depend on the value of Omega_m. This function expects all lightcones to have the same Omega_m.
+# Plot the saliency maps over the light-cones. Axis scales depend on the value of Omega_m. This function expects all lightcones to have the same Omega_m
 def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
+    # Define parameter names, ranges and latex code
     parameter_list=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
     fig, ax = plt.subplots(
         2*len(parameters),
@@ -29,6 +31,7 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
         ),
     )
 
+    # Create opt mock and bare simulation saliency maps for each of the requested parameters
     for x,para in enumerate(parameters+parameters):
         # Plot bare simulations in the first half
         if x<len(parameters):
@@ -94,7 +97,6 @@ def createSaliencyMaps(filename,sim_lightcones,sim_model,mock_lightcones,mock_mo
         combined_mockSaliency=np.zeros((140,2350))
         for lc in sim_lightcones:
             combined_simSaliency+=simSaliency(loss, lc.reshape(140,140,2350,1))[0][70]
-    
         for lc in mock_lightcones:
             combined_mockSaliency+=mockSaliency(loss, lc.reshape(140,140,2350,1))[0][70]
         if simSaliency_maps is False:
