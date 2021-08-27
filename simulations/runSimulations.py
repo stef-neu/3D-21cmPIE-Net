@@ -12,7 +12,7 @@ o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="Produces an astro-only dataset in a CDM universe by only sampling LX,E0,Tvir and zeta.")
 
 o.add_option('--filter', dest='filter', default=True, action="store_false",
-             help="If true, applies tau and global neutral fraction filters. If a run fails the filters it will be restarted with new initial parameters.")
+             help="When true it applies tau and global neutral fraction filters. If a run fails the filters it will be restarted with new random initial parameters.")
 
 o.add_option('--threads', dest='threads', default=1, type=int,
              help="Number of threads used for simulations.")
@@ -23,10 +23,10 @@ logger = logging.getLogger('21cmFAST')
 logger.setLevel(logging.INFO)
     
 # Settings
-p21c.inputs.global_params.P_CUTOFF = not opts.ao
+p21c.inputs.global_params.P_CUTOFF = not opts.ao # CDM universe for astro-only dataset
 height_dim = 140 # Number of pixels in space dimensions
 box_len = 200 # Box size in MPc
-recalculate_redshifts = False # If you change any light-cone parameters (e.g. box_len, height_dim, redshift, max_redshift) recalculate_redshifts should be set to true
+recalculate_redshifts = False # If you change any light-cone parameters, (e.g. box_len, height_dim, redshift, max_redshift) recalculate_redshifts should be set to true
 
 if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
@@ -57,7 +57,6 @@ while j<int(args[0]):
    LX=random.uniform(38,42)
    Tvir=random.uniform(4,5.3)
    Zeta=random.uniform(10,250)
-   p21c.inputs.global_params.M_WDM = WDM
    print("run number = " + str(j))
    print("m_WDM = "+str(WDM))
    print("OMm = "+str(OMm))
@@ -65,7 +64,9 @@ while j<int(args[0]):
    print("LX = "+str(LX))
    print("Tvir = "+str(Tvir))
    print("Zeta = "+str(Zeta))
-   # Light-cone creation
+
+  # Light-cone creation
+   p21c.inputs.global_params.M_WDM = WDM
    lightcone = p21c.run_lightcone(
       redshift = 5.0,
       cosmo_params = p21c.CosmoParams(OMm=OMm),
@@ -85,19 +86,19 @@ while j<int(args[0]):
       redshifts.sort()
       recalculate_redshifts=False
 
-   # computing tau=optical debth to reionization
+   # Compute tau=optical debth to reionization
    gxH=lightcone.global_xH
    gxH=gxH[::-1]
    tau=p21c.compute_tau(redshifts=redshifts,global_xHI=gxH)
 
-   # Applying tau and gxH filters
+   # Apply tau and global neutral fraction at z=5 (gxH[0]) filters
    if opts.filter and (tau>0.089 or gxH[0]>0.1):
       print("Filtered and restarted due to")
       print("tau="+str(tau))
       print("gxH(z=5)="+str(gxH[0]))
       continue
 
-   # Saving the light-cones to a tfrecords file
+   # Save the light-cones to a tfrecords file
    attr=getattr(lightcone,"brightness_temp")
    LClist = tf.train.BytesList(value=[attr[:,:,:2350].flatten().astype(np.float16).tobytes()])
    LBlist = tf.train.FloatList(value=[WDM,OMm,LX,E0,Tvir,Zeta])
