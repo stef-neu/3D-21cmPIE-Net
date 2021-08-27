@@ -4,7 +4,7 @@ import ReadData, Model, Plotting
 import shutil, optparse, sys
 
 o = optparse.OptionParser()
-o.set_usage('calc_sense.py [options] [epochs]')
+o.set_usage('runCNN.py [options] [epochs]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per lightcone")
