@@ -16,20 +16,12 @@ class ReadData():
             self.paras=6
     def parse_function(self,files):
         # Function for parsing our tf.records files. We may apply our filters now if we didn't do it during the simulations
-        if self.apply_filter:
-            keys_to_features = {"label":tf.io.FixedLenFeature((self.paras),tf.float32),
-                                "image":tf.io.FixedLenFeature((),tf.string),
-                                "tau":tf.io.FixedLenFeature((),tf.float32),
-                                "gxH":tf.io.FixedLenFeature((92),tf.float32),
-                                "z":tf.io.FixedLenFeature((92),tf.float32),
-            }
-        else:
-            keys_to_features = {"label":tf.io.FixedLenFeature((self.paras),tf.float32),
-                                "image":tf.io.FixedLenFeature((),tf.string),
-                                "tau":tf.io.FixedLenFeature((),tf.float32),
-                                "gxH":tf.io.FixedLenFeature((92),tf.float32),
-                                "z":tf.io.FixedLenFeature((92),tf.float32),
-            }
+        keys_to_features = {"label":tf.io.FixedLenFeature((self.paras),tf.float32),
+                            "image":tf.io.FixedLenFeature((),tf.string),
+                            "tau":tf.io.FixedLenFeature((),tf.float32),
+                            "gxH":tf.io.FixedLenFeature((92),tf.float32),
+                            "z":tf.io.FixedLenFeature((92),tf.float32),
+        }
         parsed_features = tf.io.parse_example(files, keys_to_features)
         image = tf.io.decode_raw(parsed_features["image"],tf.float16)
         image = tf.reshape(image,(140,140,2350))
