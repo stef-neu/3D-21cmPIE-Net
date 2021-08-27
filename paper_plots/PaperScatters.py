@@ -4,11 +4,12 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import functools, os
 
 def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,vmax=0,vmax_outer=0,inlet_scatter=False):
+    # Load npz file with test labels and predictions from a neural network
     with np.load(origin) as data:
         test_labels = data["test_labels"]
         test_pred = data["test_pred"]
 
-    # Only required for Figure 2
+    # Additional test labels and predictions for opt and mod mocks. Only required for Figure 2
     if inlet_diagram:
         with np.load("../paper_results/3DOptMock6Par/TestValues.npz") as data:
             labels2 = data["test_labels"]
@@ -21,17 +22,19 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
     # Define the name, parameter range and latex code for each parameter
     parameters=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
 
-    # Revert normalizing the parameters to the [0,1] range
+    # Revert parameter normalizations to [0,1] range
     for para in range(6):
         test_pred[:,para]=[x*(parameters[para][2]-parameters[para][1])+parameters[para][1] for x in test_pred[:,para]]
         test_labels[:,para]=[x*(parameters[para][2]-parameters[para][1])+parameters[para][1] for x in test_labels[:,para]]
         if inlet_diagram:
             pred2[:,para]=[x*(parameters[para][2]-parameters[para][1])+parameters[para][1] for x in pred2[:,para]]
             labels2[:,para]=[x*(parameters[para][2]-parameters[para][1])+parameters[para][1] for x in labels2[:,para]]
-  
+
+    # Create plots for each parameter
     for para in range(6):
         if inlet_scatter and inlet_scatter[0]!=parameters[para][0]:
             continue
+        # Define axis limits
         limlow=parameters[para][1]-(parameters[para][2]-parameters[para][1])*0.05
         limhigh=parameters[para][2]+(parameters[para][2]-parameters[para][1])*0.05
 
@@ -47,6 +50,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
             rect_histx = [left, bottom + height + spacing, width, (0.18 if cbar else outwidth)]
             rect_histy = [left + width + spacing, bottom, outwidth, height]
             ax = fig.add_axes(rect_scatter)
+            # Create the main plot and add axis histograms
             ax.hist2d(test_labels[:,para],test_pred[:,para],bins=50,range=[[limlow,limhigh],[limlow,limhigh]],cmap='plasma',vmin=vmin,vmax=(vmax if vmax else None))
             ax_histx = fig.add_axes(rect_histx, sharex=ax)
             ax_histy = fig.add_axes(rect_histy, sharey=ax)
@@ -112,6 +116,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
 
         # No axis hists
         else:
+            # Create main plot
             fig,ax=plt.subplots(figsize=((5.4,5) if not cbar else None))
             plt.hist2d(test_labels[:,para],test_pred[:,para],bins=50,range=[[limlow,limhigh],[limlow,limhigh]],cmap='plasma',vmin=vmin,vmax=(vmax if vmax else None))
             if cbar:
