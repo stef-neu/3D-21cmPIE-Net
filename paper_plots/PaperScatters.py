@@ -156,7 +156,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
         ax.set_xlabel('Labels')
         ax.set_ylabel('Predictions')
         ax.grid(True)
-        os.makedirs(filename, exist_ok=True)
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         plt.savefig(filename+parameters[para][0]+(parameters[para2][0] if para2 else "")+".png")
         plt.close()
 
