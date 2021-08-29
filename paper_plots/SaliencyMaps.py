@@ -75,7 +75,7 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
     cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-150,vmax=30), cmap="EoR"), ax=ax,aspect=10*len(parameters))   
     cbar_label = r"$\delta T_B$ [mK]"
     cbar.ax.set_ylabel(cbar_label)
-    os.makedirs(filename,exist_ok=True)
+    os.makedirs(os.path.dirname(filename),exist_ok=True)
     plt.savefig(filename)
     plt.close()
 
