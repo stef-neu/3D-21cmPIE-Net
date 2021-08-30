@@ -35,11 +35,11 @@ Installation
 
 Usage
 -----
-1. Produce a dataset in simulations with a size of N lightcones. It is recommended to not produce large datasets with a single run. `runSimulations.py` creates a new output file for each run.
+1. Produce a dataset in `simulations` with a size of N lightcones. It is recommended to not produce large datasets with a single run. runSimulations.py creates a new output file for each run.
     ```
     runSimulations.py [options] [N_lightcones]
     ```
-2. Train the neural network in 3DCNN. By default this takes all output files from `runSimulations.py`.
+2. Train the neural network in `3DCNN`. By default this takes all output files from runSimulations.py.
     ```
     runCNN.py [options] [epochs]
     ```
