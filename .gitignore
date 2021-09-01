@@ -136,3 +136,6 @@ dmypy.json
 *.tfrecords
 *.png
 output/
+
+# Backup files
+*~
