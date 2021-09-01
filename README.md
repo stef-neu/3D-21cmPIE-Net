@@ -48,8 +48,8 @@ Usage
     ```
 The trained 3D CNNs and test results from the paper can be found under paper_results. The code for the paper plots can be found in paper_plots. This code uses the data from paper_results.
 
-Achknowledgement
-----------------
+Achknowledgements
+-----------------
 If you use any part of this repository please cite the following paper:
 ```text
 [Bibtex Citation]
@@ -57,7 +57,7 @@ If you use any part of this repository please cite the following paper:
 When using `runSimulations.py` or `SaliencyMaps.py` please also cite both of the following papers to ackknowledge [21cmFAST][21cmFAST]
     
 ```
-@article{Murray2020,
+@article{Murray_2020,
   doi = {10.21105/joss.02582},
   url = {https://doi.org/10.21105/joss.02582},
   year = {2020},
@@ -72,7 +72,7 @@ When using `runSimulations.py` or `SaliencyMaps.py` please also cite both of the
 ```
 
 ```
-@article{Mesinger2010,
+@article{Mesinger_2011,
     author = {Mesinger, Andrei and Furlanetto, Steven and Cen, Renyue},
     title = "{21cmfast: a fast, seminumerical simulation of the high-redshift 21-cm signal}",
     journal = {Monthly Notices of the Royal Astronomical Society},
