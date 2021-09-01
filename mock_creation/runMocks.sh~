@@ -1,0 +1,16 @@
+#!/bin/bash
+#SBATCH --job-name=Sal
+#SBATCH --partition=all
+#SBATCH --nodes=1
+# #SBATCH --hint=memory_bound
+# #SBATCH --tasks-per-node=16
+#SBATCH --time=1:00:00
+#SBATCH --export=NONE
+
+set -e # Stop operation on first error.
+
+source /sw/batch/init.sh
+source /home/p1sx200/miniconda3/bin/activate
+conda init
+
+python3 mockFactory.py 1
