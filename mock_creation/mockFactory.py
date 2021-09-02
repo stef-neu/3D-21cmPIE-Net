@@ -2,14 +2,10 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import optparse, math, sys, glob, os
-from astropy.cosmology import Planck15
-from astropy import units
-from astropy.cosmology import z_at_value
 from powerbox.dft import fft, ifft
-from functools import reduce
 import py21cmfast as p21c
 
-# Tool for efficient mock creation. N_file specifies the tfrecords file number N for which the mocks are created.
+# Tool for efficient mock creation. mockFactory sorts the files in ../simulations/output/ alphabetically and creates mocks for file number N
 o = optparse.OptionParser()
 o.set_usage('mockFactory.py [options] [N_file]')
 o.add_option('--model', dest='model', default="opt",
@@ -58,11 +54,12 @@ elif opts.model=="mod":
     files = glob.glob("calcfiles/mod_mocks/SKA1_Lowtrack_6.0hr_mod_0.*_LargeHII_Pk_Ts1_Tb9_nf0.52_v2.npz")
 else:
     print("Please choose a valid foreground model")
+    exit()
 
 files.sort(reverse=True)
 
-# List and sort all tfrecords files
-bare_lc = glob.glob("../simulations/output/FullPara/*.tfrecord")
+# List and sort all simulated light-cone files
+bare_lc = glob.glob("../simulations/output/*.tfrecord")
 bare_lc.sort()
 
 # Create mocks for the tfrecords file number N as specified by the user
@@ -70,8 +67,6 @@ dataset = tf.data.TFRecordDataset(bare_lc[int(args[0])])
 dataset = dataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
 ds_numpy = tfds.as_numpy(dataset)
 
-# For the given light-cone settings all light-cones have been created with 92 boxes at redshift values stored in redshifts5.npy
-box_redshifts=np.load("../simulations/redshifts5.npy")
 name=bare_lc[int(args[0])].split("/")
 print("Creating mocks for"+str(bare_lc[int(args[0])]))
 name="output/"+name[-1]
@@ -82,6 +77,7 @@ writer = tf.io.TFRecordWriter(name)
 for ex in ds_numpy:
     delta_T=ex[0]
     label=ex[1]
+    box_redshifts=label[99:]
         
     # 21cmFAST functions are used to derive the redshift associated with each pixel
     cosmo_params = p21c.CosmoParams(OMm=label[1])
@@ -152,7 +148,7 @@ for ex in ds_numpy:
                     else:
                         deldel_T_noise[n_x,n_y,n_z]=0
         
-                    # Add noise to signal in k space. uv_box is a mask of 0 or 1 to make it possible to potentially ignore diverging values or areas with very high errors.
+                    # Add noise to signal in k space. uv_box is a mask of 0 or 1 to make it possible to potentially ignore diverging values or areas with very high errors
                     if(err21>=1000):
                         deldel_T_mock[n_x,n_y,n_z]=0
                     else:
@@ -161,7 +157,7 @@ for ex in ds_numpy:
         # Transform back into real space
         delta_T_mock=np.fft.irfftn(deldel_T_mock,s=(HII_DIM,HII_DIM,box_len[x]))
 
-        #Rebuild the light-cone
+        # Rebuild the light-cone
         if output is False:
             output=delta_T_mock
         else:
