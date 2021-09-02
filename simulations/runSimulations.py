@@ -25,8 +25,8 @@ logger.setLevel(logging.INFO)
 # Settings
 p21c.inputs.global_params.P_CUTOFF = not opts.ao # CDM universe for astro-only dataset
 height_dim = 140 # Number of pixels in space dimensions
-box_len = 200 # Box size in MPc
-recalculate_redshifts = False # If you change any light-cone parameters, (e.g. box_len, height_dim, redshift, max_redshift) recalculate_redshifts should be set to true
+box_len = 200 # Box size in Mpc
+recalculate_redshifts = False # The redshifts associated with each box depend on the light-cone parameters, (e.g. box_len, height_dim, redshift, max_redshift). For the given settings they are stored in redshifts5.npy
 
 if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
@@ -35,10 +35,7 @@ if not recalculate_redshifts:
   
 # Do not overwrite existing files
 i=1
-if opts.ao:
-   dest="output/AstroOnly/"
-else:
-   dest="output/FullPara/"
+dest="output"
 os.makedirs(dest, exist_ok=True)
 while(dest+'Run'+str(i)+'.tfrecord' in glob.glob(dest+"*")):
    i+=1
