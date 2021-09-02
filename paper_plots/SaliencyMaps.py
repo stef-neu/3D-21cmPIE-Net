@@ -16,6 +16,18 @@ def model_modifier(m):
     m.layers[-1].activation = tf.keras.activations.linear
     return m
 
+# Read light-cones from tfrecords files
+def parse_function(files):
+    keys_to_features = {"label":tf.io.FixedLenFeature((6),tf.float32),
+                        "image":tf.io.FixedLenFeature((),tf.string),
+                        "tau":tf.io.FixedLenFeature((),tf.float32),
+                        "gxH":tf.io.FixedLenFeature((92),tf.float32),
+                        "z":tf.io.FixedLenFeature((92),tf.float32),}
+    parsed_features = tf.io.parse_example(files, keys_to_features)
+    image = tf.io.decode_raw(parsed_features["image"],tf.float16)
+    image = tf.reshape(image,(140,140,2350))
+    return image, parsed_features["label"] # Image, m_WDM,Omega_m,L_X,E_0,T_vir,zeta
+
 # Plot the saliency maps over the light-cones. Axis scales depend on the value of Omega_m. This function expects all lightcones to have the same Omega_m
 def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
     # Define parameter names, ranges and latex code
@@ -122,18 +134,22 @@ def createSaliencyMaps(filename,sim_lightcones,sim_model,mock_lightcones,mock_mo
 if __name__=="__main__":
     simModelFile="../paper_results/3DSim6Par/Models/3D_21cmPIE_Net"
     mockModelFile="../paper_results/3DOptMock6Par/Models/3D_21cmPIE_Net"
-    simDataFile="../data/BareSimLightcones.npz"
-    mockDataFile="../data/OptMockLightcones.npz"
+    simDataFile="../input/BareSim.tfrecord"
+    mockDataFile="../input/optMock.tfrecord"
 
     simModel = keras.models.load_model(simModelFile)
     mockModel = keras.models.load_model(mockModelFile)
 
-    with np.load(simDataFile) as data:
-        simData=data["images"].astype("float32")
-    with np.load(mockDataFile) as data:
-        mockData=data["images"].astype("float32")
-        # Here Omega_m should be equal for all lightcones.
-        OMm=data["labelsOMm"][0]
+    # Load data from a tfrecord file
+    simDataset = tf.data.TFRecordDataset(simDataFile)
+    mockData = tf.data.TFRecordDataset(mockDataFile)
+    simDataset = simDataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    mockDataset = mockDataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    simData = np.array(list(simDataset.as_numpy_iterator()))
+    mockData = np.array(list(mockDataset.as_numpy_iterator()))
+    
+    # Here Omega_m should be equal for all lightcones.
+    OMm=simData[1][1]
 
     # Calculate and plot saliency maps for the requested parameters for the provided 3D CNNs which were trained on bare simulations and opt mocks respectively. The saliency for each lightcone in simData and for each lightcone in mockData will be stacked to reduce effects from local fluctuations. Therefore all lightcones in simData and all lightcones in mockData should be created using the same parameters.
     # Parameters = m_WDM, Omega_m, L_X, E_0, T_vir, zeta
