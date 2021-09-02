@@ -17,6 +17,9 @@ o.add_option('--filter', dest='filter', default=True, action="store_false",
 o.add_option('--threads', dest='threads', default=1, type=int,
              help="Number of threads used for simulations.")
 
+o.add_option('--saliency', dest='sal', default=False, action="store_true",
+             help="Use this flag to produce the light-cones required for paper_plots/SaliencyMaps.py. If this flag is set then N_runs specifies the number of runs with the SAME set of parameters")
+
 opts, args = o.parse_args(sys.argv[1:])
 
 logger = logging.getLogger('21cmFAST')
@@ -32,14 +35,20 @@ if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
       redshifts=list(np.load(data,allow_pickle=True))
       redshifts.sort()
-  
-# Do not overwrite existing files
-i=1
-dest="output"
-os.makedirs(dest, exist_ok=True)
-while(dest+'Run'+str(i)+'.tfrecord' in glob.glob(dest+"*")):
-   i+=1
-writer = tf.io.TFRecordWriter(dest+'Run'+str(i)+'.tfrecord')
+
+if opts.sal:
+   # Produce light-cones for ../paper_plots/SaliencyMaps.py                                               
+   dest="../paper_plots/input/"
+   os.makedirs(dest, exist_ok=True)
+   writer = tf.io.TFRecordWriter(dest+'BareSim.tfrecord')
+else:
+   # Do not overwrite existing files                                                                      
+   dest="output/"
+   os.makedirs(dest, exist_ok=True)
+   i=1
+   while(dest+'Run'+str(i)+'.tfrecord' in glob.glob(dest+"*")):
+      i+=1
+   writer = tf.io.TFRecordWriter(dest+'Run'+str(i)+'.tfrecord')
 
 j=0
 os.makedirs("_cache", exist_ok=True)
@@ -47,20 +56,37 @@ while j<int(args[0]):
    # Cleanup
    cache_tools.clear_cache(direc="_cache")
 
-   # Random sampling over parameter ranges
-   WDM=random.uniform(0.3,10.0)
-   OMm=((0.02242 + 0.11933) / 0.6766 ** 2 if opts.ao else random.uniform(0.2,0.4))
-   E0=random.uniform(100,1500)
-   LX=random.uniform(38,42)
-   Tvir=random.uniform(4,5.3)
-   Zeta=random.uniform(10,250)
-   print("run number = " + str(j))
-   print("m_WDM = "+str(WDM))
-   print("OMm = "+str(OMm))
-   print("E0 = "+str(E0))
-   print("LX = "+str(LX))
-   print("Tvir = "+str(Tvir))
-   print("Zeta = "+str(Zeta))
+   if opts.sal:
+      # Produce light-cones for ../paper_plots/SaliencyMaps.py with the following parameters              
+      WDM=2.
+      OMm=0.3
+      E0=500.
+      LX=40.
+      Tvir=4.
+      Zeta=30.
+      print("run number = " + str(j))
+      print("m_WDM = "+str(WDM))
+      print("OMm = "+str(OMm))
+      print("E0 = "+str(E0))
+      print("LX = "+str(LX))
+      print("Tvir = "+str(Tvir))
+      print("Zeta = "+str(Zeta))
+
+   else:
+      # Random sampling over parameter ranges                                                             
+      WDM=random.uniform(0.3,10.0)
+      OMm=((0.02242 + 0.11933) / 0.6766 ** 2 if opts.ao else random.uniform(0.2,0.4))
+      E0=random.uniform(100,1500)
+      LX=random.uniform(38,42)
+      Tvir=random.uniform(4,5.3)
+      Zeta=random.uniform(10,250)
+      print("run number = " + str(j))
+      print("m_WDM = "+str(WDM))
+      print("OMm = "+str(OMm))
+      print("E0 = "+str(E0))
+      print("LX = "+str(LX))
+      print("Tvir = "+str(Tvir))
+      print("Zeta = "+str(Zeta))
 
   # Light-cone creation
    p21c.inputs.global_params.M_WDM = WDM
@@ -71,7 +97,7 @@ while j<int(args[0]):
       user_params = {"HII_DIM": height_dim, "BOX_LEN": box_len,"PERTURB_ON_HIGH_RES":True,"N_THREADS":opts.threads,"USE_INTERPOLATION_TABLES": False},
       flag_options = {"USE_TS_FLUCT": True,"INHOMO_RECO":True},
       direc='_cache',
-      write = recalculate_redshifts #Preventing the program from saving huge amounts of data to the disk during runtime. Set to true if memory is a concern.
+      write = recalculate_redshifts # Set to false to prevent the program from saving huge amounts of data to the disk during runtime. Set to true if memory is a concern.
    )
    
    # Only required if light-cone specific parameters were changed
