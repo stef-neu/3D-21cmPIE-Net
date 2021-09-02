@@ -22,7 +22,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
     # Define the name, parameter range and latex code for each parameter
     parameters=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
 
-    # Revert parameter normalizations to [0,1] range
+    # Revert parameter normalizations to the [0,1] range
     for para in range(6):
         test_pred[:,para]=[x*(parameters[para][2]-parameters[para][1])+parameters[para][1] for x in test_pred[:,para]]
         test_labels[:,para]=[x*(parameters[para][2]-parameters[para][1])+parameters[para][1] for x in test_labels[:,para]]
@@ -161,7 +161,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
         plt.close()
 
 if __name__=="__main__":
-    # Creating the paper scatter plots
+    # Create the paper scatter plots
     plot("output/ScatterPlots/CompDiagrams_","../paper_results/3DSim6Par/TestValues.npz",cbar=True,inlet_diagram=True,vmax=17) # Figure 2
     plot("output/ScatterPlots/AxisHists_","../paper_results/3DSim6Par/TestValues.npz",cbar=True,axis_hists=True,vmax=17,vmax_outer=25) # Figure 3
     plot("output/ScatterPlots/SimMockTransfer_","../paper_results/TransferSimCNNMockData/TestValues.npz",cbar=True,vmax=15) # Figure B1, right
