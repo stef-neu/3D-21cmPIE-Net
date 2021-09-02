@@ -6,7 +6,7 @@ class Model():
     def __init__(self,shape):
         self.inputs = keras.Input(shape=shape)
 
-    def buildModel(self):
+    def buildModel(self,n_parameters):
         # Convolution and pooling layers
         x = layers.Conv3D(filters=32, kernel_size=(3,3,102),strides=(1,1,102), activation="relu")(self.inputs)
         x = layers.Conv3D(filters=32, kernel_size=(3,3,2), activation="relu")(x)
@@ -24,9 +24,9 @@ class Model():
         x = layers.Dense(128, activation="relu")(x)
         x = layers.Dense(128, activation="relu")(x)
         x = layers.Dense(128, activation="relu")(x)
-        outputs = layers.Dense(6, activation="sigmoid")(x)
+        outputs = layers.Dense(n_parameters, activation="sigmoid")(x)
 
-        # Define and compiling our model
+        # Define and compile the model
         self.model = keras.Model(inputs=self.inputs, outputs=outputs, name="3D_21cmPIE-Net")
         self.model.summary()     
         self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=4e-4,epsilon=1e-7,amsgrad=True),
@@ -34,7 +34,7 @@ class Model():
         return self.model
 
     def fitModel(self, training_data, test_data, **kwargs):
-        # Train the given dataset and calculate test scores
+        # Train on the given dataset and calculate test scores
         self.model.fit(training_data,**kwargs)
         print("Evaluating test scores")
         test_scores = self.model.evaluate(test_data)
