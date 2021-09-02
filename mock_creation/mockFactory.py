@@ -8,8 +8,16 @@ import py21cmfast as p21c
 # Tool for efficient mock creation. mockFactory sorts the files in ../simulations/output/ alphabetically and creates mocks for file number N
 o = optparse.OptionParser()
 o.set_usage('mockFactory.py [options] [N_file]')
+
 o.add_option('--model', dest='model', default="opt",
              help="Foreground model to be used for mock creation. Options are opt and mod.")
+
+o.add_option('--data', dest='data', default="../simulations/output/FullPara/*.tfrecord",
+             help="File pattern for the light-cone files")
+
+o.add_option('--saliency', dest='sal', default=False, action="store_true",
+             help="Use this flag to produce the light-cones required for paper_plots/SaliencyMaps.py. This changes both the input and output directories")
+
 opts, args = o.parse_args(sys.argv[1:])
 
 # Read light-cones from tfrecords files
@@ -59,19 +67,25 @@ else:
 files.sort(reverse=True)
 
 # List and sort all simulated light-cone files
-bare_lc = glob.glob("../simulations/output/*.tfrecord")
-bare_lc.sort()
+if opts.sal:
+    bare_lc = glob.glob("../paper_plots/input/BareSim.tfrecord")
+else:
+    bare_lc = glob.glob(opts.data)
+    bare_lc.sort()
 
 # Create mocks for the tfrecords file number N as specified by the user
 dataset = tf.data.TFRecordDataset(bare_lc[int(args[0])])
 dataset = dataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
 ds_numpy = tfds.as_numpy(dataset)
 
-name=bare_lc[int(args[0])].split("/")
-print("Creating mocks for"+str(bare_lc[int(args[0])]))
-name="output/"+name[-1]
-os.makedirs("output",exist_ok=True)
-writer = tf.io.TFRecordWriter(name)
+if opts.sal:
+    writer=tf.io.TFRecordWriter("../paper_plots/input/"+opts.model+"Mocks.tfrecord")
+else:
+    name=bare_lc[int(args[0])].split("/")
+    print("Creating mocks for"+str(bare_lc[int(args[0])]))
+    name="output/"+name[-1]
+    os.makedirs("output",exist_ok=True)
+    writer = tf.io.TFRecordWriter(name)
 
 # For each light-cone in the specified tfrecords file
 for ex in ds_numpy:
