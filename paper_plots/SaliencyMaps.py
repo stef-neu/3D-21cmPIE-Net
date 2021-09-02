@@ -58,6 +58,9 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
             ax[x].set_xticks([])
             ax[x].set_xlabel("")
         ax[x].text(10,10,"$\delta "+parameter_list[para][3][1:],color="w",fontsize=14)
+        ax[x].set_ylabel("")
+    fig.text(0.01,0.59+0.0275*len(parameters),"y-axis [Mpc]",rotation="vertical")
+    fig.text(0.01,0.20+0.005*len(parameters),"y-axis [Mpc]",rotation="vertical")
     ax[0].xaxis.tick_top()
     ax[0].set_xlabel('Frequency [MHz]')    
     ax[0].xaxis.set_label_position('top')
@@ -71,7 +74,7 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
         ax[y].text(10,150,"Sim",color="w",fontsize=14)
         ax[x-y].text(10,150,"Opt Mock",color="w",fontsize=14)
 
-    # Use colorbar with the "EoR" cmap from 21cmFAST
+    # Use a colorbar with the "EoR" cmap from 21cmFAST
     cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-150,vmax=30), cmap="EoR"), ax=ax,aspect=10*len(parameters))   
     cbar_label = r"$\delta T_B$ [mK]"
     cbar.ax.set_ylabel(cbar_label)
@@ -107,7 +110,7 @@ def createSaliencyMaps(filename,sim_lightcones,sim_model,mock_lightcones,mock_mo
             mockSaliency_maps = np.append(mockSaliency_maps,np.array([combined_mockSaliency]),axis=0)
     saliency_maps=np.append(simSaliency_maps,mockSaliency_maps,axis=0)
     
-    # Define our images as instances of the 21cmFAST LightCone class to use the plotting functions from 21cmFAST
+    # Define the light-cones as instances of the 21cmFAST LightCone class to use the plotting functions from 21cmFAST
     cosmo_params = p21c.CosmoParams(OMm=OMm)
     astro_params = p21c.AstroParams(INHOMO_RECO=True)
     user_params = p21c.UserParams(HII_DIM=140, BOX_LEN=200)
@@ -132,7 +135,7 @@ if __name__=="__main__":
         # Here Omega_m should be equal for all lightcones.
         OMm=data["labelsOMm"][0]
 
-    # Calculates and plots saliency maps for the requested parameters for the provided 3D CNNs which were trained on bare simulations and opt mocks respectively. The saliency for each lightcone in simData and for each lightcone in mockData will be stacked to reduce effects from local fluctuations. Therefore all lightcones in simData and all lightcones in mockData should be created using the same parameters.
+    # Calculate and plot saliency maps for the requested parameters for the provided 3D CNNs which were trained on bare simulations and opt mocks respectively. The saliency for each lightcone in simData and for each lightcone in mockData will be stacked to reduce effects from local fluctuations. Therefore all lightcones in simData and all lightcones in mockData should be created using the same parameters.
     # Parameters = m_WDM, Omega_m, L_X, E_0, T_vir, zeta
     createSaliencyMaps("output/SaliencyMaps/WDMOMmSaliency.png",simData,simModel,mockData,mockModel,parameters=[0,1],OMm=OMm) # Figure 5
     createSaliencyMaps("output/SaliencyMaps/AstroSaliency.png",simData,simModel,mockData,mockModel,parameters=[2,3,4,5],OMm=OMm) # Figure C1
