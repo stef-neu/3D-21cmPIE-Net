@@ -9,7 +9,7 @@ o.set_usage('runCNN.py [options] [epochs]')
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per lightcone")
 
-o.add_option('--data', dest='data', default="../simulations/output/FullPara/*.tfrecord",
+o.add_option('--data', dest='data', default="../simulations/output/*.tfrecord",
              help="File pattern for the light-cone files")
 
 o.add_option('--continue', dest='cont', default=False, action="store_true",
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     if opts.cont:
         model=modelHandler.loadModel("output/models/3D_21cmPIE_Net")
     else:
-        model=modelHandler.buildModel()
+        model=modelHandler.buildModel(n_parameters=(4 if opts.ao else 6))
 
     # Clear out any prior log data
     try:
@@ -51,7 +51,7 @@ if __name__ == "__main__":
         )
     model=modelHandler.saveModel("output/models/3D_21cmPIE_Net")
     
-    # Calculate R2 values and create scatter plots.
+    # Calculate R^2 values and create scatter plots.
     plot=Plotting.Plotting(model,test_ds,astroOnly=opts.ao)
     plot.calculateR2()
     plot.plot()
