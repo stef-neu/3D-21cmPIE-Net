@@ -14,8 +14,9 @@ class ReadData():
             self.paras=4
         else:
             self.paras=6
+  
+    # Function for parsing our tf.records files. We may apply our filters now if we didn't do it during the simulations
     def parse_function(self,files):
-        # Function for parsing our tf.records files. We may apply our filters now if we didn't do it during the simulations
         keys_to_features = {"label":tf.io.FixedLenFeature((self.paras),tf.float32),
                             "image":tf.io.FixedLenFeature((),tf.string),
                             "tau":tf.io.FixedLenFeature((),tf.float32),
@@ -31,7 +32,7 @@ class ReadData():
             return image[0:self.height,0:self.width,0:self.img_length], tf.stack([5.,5.,5.,5.,5.,5.])
       
     def read(self,path,test_path=False):
-        # Reading in all files matching the given pattern.
+        # Read in all files matching the given pattern.
         paths = glob.glob(path)
         np.random.shuffle(paths)
         print("Reading in "+str(len(paths))+" files.")
@@ -40,7 +41,7 @@ class ReadData():
         if self.apply_filter:
             ds = ds.filter(lambda x,y: y[0]<=1)
         
-        # We may want use a seperate test set
+        # We may want to use a seperate test set
         if test_path:
             test_paths=glob.glob(test_path)
             self.test_ds = tf.data.TFRecordDataset(test_paths)
