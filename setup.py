@@ -10,9 +10,8 @@ setup(
     license="BSD",
     install_requires = [
         "numpy",
-        "tensorflow>2.0",
+        "tensorflow>2.2",
         "matplotlib",
-        "py21cmfast>=3.1",
     ],
     python_requires='>=3.6',
 )
