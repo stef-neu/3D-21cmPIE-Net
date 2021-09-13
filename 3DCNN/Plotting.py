@@ -3,16 +3,16 @@ import matplotlib.pyplot as plt
 import functools, os
 
 class Plotting():
-    def __init__(self,model,test_ds,astroOnly=False,load=False):
+    def __init__(self,model,test_ds,astro_only=False,load_file=False):
         # Define parameter names, ranges and latex code
-        if astroOnly:
+        if astro_only:
             self.parameters=[["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
         else:
             self.parameters=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
 
         # Load saved test predictions and labels from a previous run
-        if load:
-            with np.load("output/TestValues.npz") as data:
+        if load_file:
+            with np.load(load_file) as data:
                 self.test_pred=data["test_pred"]
                 self.test_labels=data["test_labels"]
 
@@ -27,19 +27,19 @@ class Plotting():
                     self.test_labels = np.append(self.test_labels,label.numpy(),axis=0)
 
             # Save the test labels and predictions so we don't have to do a complete rerun just to modify the plots
-            os.makedirs(path, exist_ok=True)
-            np.savez("output/TestValues.npz",**{"test_labels":self.test_labels, "test_pred":self.test_pred})
+            os.makedirs("output", exist_ok=True)
+            np.savez("output/test_values.npz",**{"test_labels":self.test_labels, "test_pred":self.test_pred})
 
-    def calculateR2(self):
+    def calculate_r2(self):
         for para in range(len(self.parameters)):
             # Calculate the R2-score for each parameter
             average=sum(self.test_labels[:,para])/len(self.test_labels[:,para])
-            top=[(x-y)**2 for x, y in zip(self.test_labels[:,para],self.test_pred[:,para])]
-            bottom=[(x-average)**2 for x in self.test_labels[:,para]]
-            R2=1-functools.reduce(lambda a,b : a+b,top)/functools.reduce(lambda a,b : a+b,bottom)
-            print("R²_{"+self.parameters[para][0]+"}=" + str(R2))
+            dividend=[(x-y)**2 for x, y in zip(self.test_labels[:,para],self.test_pred[:,para])]
+            divisor=[(x-average)**2 for x in self.test_labels[:,para]]
+            r2=1-functools.reduce(lambda a,b : a+b,dividend)/functools.reduce(lambda a,b : a+b,divisor)
+            print("R²_{"+self.parameters[para][0]+"}=" + str(r2))
 
-    def plot(self,path="output/scatterPlots"):
+    def plot(self,path="output/scatter_plots"):
         os.makedirs(path, exist_ok=True)
         for para in range(len(self.parameters)):
             # Go back from [0,1] to the initial parameter ranges
@@ -56,7 +56,7 @@ class Plotting():
             ax.set_ylabel('Predictions')
             ax.legend()
             ax.grid(True)
-            plt.savefig(path+"/TestScatter_"+self.parameters[para][0]+".png")
+            plt.savefig(path+"/test_scatter_"+self.parameters[para][0]+".png")
             plt.close()
 
             # Create heatmap scatter plots of true vs predicted values
@@ -68,5 +68,5 @@ class Plotting():
             plt.ylabel('Predictions')
             plt.tight_layout()
             fig.autolayout = True
-            plt.savefig(path+"/TestHM_"+self.parameters[para][0]+".png")
+            plt.savefig(path+"/test_heatmap_"+self.parameters[para][0]+".png")
             plt.close()
