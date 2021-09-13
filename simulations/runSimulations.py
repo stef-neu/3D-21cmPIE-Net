@@ -64,14 +64,6 @@ while j<int(args[0]):
       LX=40.
       Tvir=4.
       Zeta=30.
-      print("run number = " + str(j))
-      print("m_WDM = "+str(WDM))
-      print("Omega_m = "+str(OMm))
-      print("E_0 = "+str(E0))
-      print("L_X = "+str(LX))
-      print("T_vir = "+str(Tvir))
-      print("zeta = "+str(Zeta))
-
    else:
       # Random sampling over parameter ranges
       WDM=random.uniform(0.3,10.0)
@@ -80,15 +72,16 @@ while j<int(args[0]):
       LX=random.uniform(38,42)
       Tvir=random.uniform(4,5.3)
       Zeta=random.uniform(10,250)
-      print("run number = " + str(j))
-      print("m_WDM = "+str(WDM))
-      print("Omega_m = "+str(OMm))
-      print("E_0 = "+str(E0))
-      print("L_X = "+str(LX))
-      print("T_vir = "+str(Tvir))
-      print("zeta = "+str(Zeta))
+   
+   print("run number = " + str(j))
+   print("m_WDM = "+str(WDM))
+   print("Omega_m = "+str(OMm))
+   print("E_0 = "+str(E0))
+   print("L_X = "+str(LX))
+   print("T_vir = "+str(Tvir))
+   print("zeta = "+str(Zeta))
 
-  # Light-cone creation
+   # Light-cone creation
    p21c.inputs.global_params.M_WDM = WDM
    lightcone = p21c.run_lightcone(
       redshift = 5.0,
