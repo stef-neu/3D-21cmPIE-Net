@@ -6,7 +6,7 @@ import os
 
 if __name__ == "__main__":
     # Load trained model
-    model = keras.models.load_model("../paper_results/3DOptMock6Par/Models/3D_21cmPIE_Net")
+    model = keras.models.load_model("../paper_results/3d_optmock_6par/models/3D_21cmPIE_Net")
     # Plot each of the 32 filters in the first convolutional layer with weights averaged over the first two dimensions
     for y in range(32):
         weights = model.layers[1].weights[0].numpy()
@@ -21,6 +21,6 @@ if __name__ == "__main__":
         plt.yticks(fontsize=15)
         plt.tight_layout()
         fig.autolayout = True
-        os.makedirs("output/FilterPlots/", exist_ok=True)
-        plt.savefig("output/FilterPlots/Filter"+str(y)+".png")
+        os.makedirs("output/filter_plots/", exist_ok=True)
+        plt.savefig("output/filter_plots/filter"+str(y)+".png") # 0,1,2,4,5,26 are in Figure C1
         plt.close()

@@ -94,13 +94,13 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
     plt.savefig(filename)
     plt.close()
 
-def createSaliencyMaps(filename,sim_lightcones,sim_model,mock_lightcones,mock_model,parameters,OMm):
-    simSaliency_maps=False
-    mockSaliency_maps=False
-    simSaliency = Saliency(sim_model,
+def create_saliency_maps(filename,sim_lightcones,sim_model,mock_lightcones,mock_model,parameters,OMm):
+    sim_saliency_maps=False
+    mock_saliency_maps=False
+    sim_saliency = Saliency(sim_model,
                            model_modifier=model_modifier,
                            clone=True)
-    mockSaliency = Saliency(mock_model,
+    mock_saliency = Saliency(mock_model,
                             model_modifier=model_modifier,
                             clone=True)
 
@@ -108,50 +108,49 @@ def createSaliencyMaps(filename,sim_lightcones,sim_model,mock_lightcones,mock_mo
     for para in parameters:
         def loss(output):
             return output[0][para]
-        combined_simSaliency=np.zeros((140,2350))
-        combined_mockSaliency=np.zeros((140,2350))
+        combined_sim_saliency=np.zeros((140,2350))
+        combined_mock_saliency=np.zeros((140,2350))
         for lc in sim_lightcones:
-            combined_simSaliency+=simSaliency(loss, lc.reshape(140,140,2350,1))[0][70]
+            combined_sim_saliency+=sim_saliency(loss, lc.reshape(140,140,2350,1))[0][70]
         for lc in mock_lightcones:
-            combined_mockSaliency+=mockSaliency(loss, lc.reshape(140,140,2350,1))[0][70]
-        if simSaliency_maps is False:
-            simSaliency_maps=np.array([combined_simSaliency])
-            mockSaliency_maps=np.array([combined_mockSaliency])
+            combined_mock_saliency+=mock_saliency(loss, lc.reshape(140,140,2350,1))[0][70]
+        if sim_saliency_maps is False:
+            sim_saliency_maps=np.array([combined_sim_saliency])
+            mock_saliency_maps=np.array([combined_mock_saliency])
         else:
-            simSaliency_maps = np.append(simSaliency_maps,np.array([combined_simSaliency]),axis=0)
-            mockSaliency_maps = np.append(mockSaliency_maps,np.array([combined_mockSaliency]),axis=0)
-    saliency_maps=np.append(simSaliency_maps,mockSaliency_maps,axis=0)
+            sim_saliency_maps = np.append(sim_saliency_maps,np.array([combined_sim_saliency]),axis=0)
+            mock_saliency_maps = np.append(mock_saliency_maps,np.array([combined_mock_saliency]),axis=0)
+    saliency_maps=np.append(sim_saliency_maps,mock_saliency_maps,axis=0)
     
     # Define the light-cones as instances of the 21cmFAST LightCone class to use the plotting functions from 21cmFAST
     cosmo_params = p21c.CosmoParams(OMm=OMm)
     astro_params = p21c.AstroParams(INHOMO_RECO=True)
     user_params = p21c.UserParams(HII_DIM=140, BOX_LEN=200)
     flag_options = p21c.FlagOptions()
-    simLightcone=p21c.LightCone(5.,user_params,cosmo_params,astro_params,flag_options,0,{"brightness_temp":sim_lightcones[0]},35.05)
-    mockLightcone=p21c.LightCone(5.,user_params,cosmo_params,astro_params,flag_options,0,{"brightness_temp":mock_lightcones[0]},35.05)
-    plot(filename,simLightcone,mockLightcone,parameters=parameters,saliency_maps=saliency_maps)
+    sim_lightcone = p21c.LightCone(5.,user_params,cosmo_params,astro_params,flag_options,0,{"brightness_temp":sim_lightcones[0].astype(np.float32)},35.05)
+    mock_lightcone = p21c.LightCone(5.,user_params,cosmo_params,astro_params,flag_options,0,{"brightness_temp":mock_lightcones[0].astype(np.float32)},35.05)
+    plot(filename,sim_lightcone,mock_lightcone,parameters=parameters,saliency_maps=saliency_maps)
   
 if __name__=="__main__":
-    simModelFile="../paper_results/3DSim6Par/Models/3D_21cmPIE_Net"
-    mockModelFile="../paper_results/3DOptMock6Par/Models/3D_21cmPIE_Net"
-    simDataFile="../input/BareSim.tfrecord"
-    mockDataFile="../input/optMock.tfrecord"
+    sim_model_file="../paper_results/3d_sim_6par/models/3D_21cmPIE_Net"
+    mock_model_file="../paper_results/3d_optmock_6par/models/3D_21cmPIE_Net"
+    sim_data_file="input/bare_sim.tfrecord"
+    mock_data_file="input/optmocks.tfrecord"
 
-    simModel = keras.models.load_model(simModelFile)
-    mockModel = keras.models.load_model(mockModelFile)
+    sim_model = keras.models.load_model(sim_model_file)
+    mock_model = keras.models.load_model(mock_model_file)
 
     # Load data from a tfrecord file
-    simDataset = tf.data.TFRecordDataset(simDataFile)
-    mockData = tf.data.TFRecordDataset(mockDataFile)
-    simDataset = simDataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    mockDataset = mockDataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    simData = np.array(list(simDataset.as_numpy_iterator()))
-    mockData = np.array(list(mockDataset.as_numpy_iterator()))
+    sim_dataset = tf.data.TFRecordDataset(sim_data_file)
+    mock_dataset = tf.data.TFRecordDataset(mock_data_file)
+    sim_dataset = sim_dataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    mock_dataset = mock_dataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    sim_data = np.array(list(sim_dataset.as_numpy_iterator()))
+    mock_data = np.array(list(mock_dataset.as_numpy_iterator()))
     
     # Here Omega_m should be equal for all lightcones.
-    OMm=simData[1][1]
-
+    OMm=sim_data[0][1][1]
     # Calculate and plot saliency maps for the requested parameters for the provided 3D CNNs which were trained on bare simulations and opt mocks respectively. The saliency for each lightcone in simData and for each lightcone in mockData will be stacked to reduce effects from local fluctuations. Therefore all lightcones in simData and all lightcones in mockData should be created using the same parameters.
     # Parameters = m_WDM, Omega_m, L_X, E_0, T_vir, zeta
-    createSaliencyMaps("output/SaliencyMaps/WDMOMmSaliency.png",simData,simModel,mockData,mockModel,parameters=[0,1],OMm=OMm) # Figure 5
-    createSaliencyMaps("output/SaliencyMaps/AstroSaliency.png",simData,simModel,mockData,mockModel,parameters=[2,3,4,5],OMm=OMm) # Figure C1
+    create_saliency_maps("output/saliency_maps/dm_saliency.png",sim_data[:,0],sim_model,mock_data[:,0],mock_model,parameters=[0,1],OMm=OMm) # Figure 5
+    create_saliency_maps("output/saliency_maps/astro_saliency.png",sim_data[:,0],sim_model,mock_data[:,0],mock_model,parameters=[2,3,4,5],OMm=OMm) # Figure C1

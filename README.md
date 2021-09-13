@@ -30,23 +30,38 @@ Installation
   
 4. When using `runSimulations.py` or `SaliencyMaps.py` install [21cmFAST][21cmFAST]
 
-5. When using `SaliencyMaps.py` install [tf-keras-vis][tf-keras-vis]
+4. When using `create_mocks.py` install [powerbox][powerbox]
+
+6. When using `SaliencyMaps.py` install [tf-keras-vis][tf-keras-vis]
 
 [21cmFAST]: https://github.com/21cmfast/21cmFAST
 [tf-keras-vis]: https://github.com/keisen/tf-keras-vis
 [21cmSense]: https://github.com/jpober/21cmSense
+[powerbox]: https://github.com/steven-murray/powerbox
 
 Usage
 -----
 1. Produce a dataset in `simulations` with a size of N lightcones. It is recommended to not produce large datasets with a single run. runSimulations.py creates a new output file for each run.
     ```
-    runSimulations.py [options] [N_lightcones]
+    python3 runSimulations.py [options] [N_lightcones]
     ```
-2. Train the neural network in `3DCNN`. By default this takes all output files from runSimulations.py.
+    
+A. Train the 3D CNN on bare simulations:
+   - Train the neural network in `3DCNN`. By default this takes all output files from runSimulations.py as input.
+       ```
+       python3 runCNN.py [options] [epochs]
+       ```
+        
+B: Train the 3D CNN on opt mocks:
+  - Create opt mocks in `mock_creation`.
     ```
-    runCNN.py [options] [epochs]
+    python3 create_mocks.py [options]
     ```
-The trained 3D CNNs and test results from the paper can be found under paper_results. The code for the paper plots can be found in paper_plots. This code uses the data from paper_results.
+  - Train the neural network in `3DCNN`. Here the input files have to be specified.
+    ```
+    python3 runCNN.py --data=../mock_creation/output/*.tfrecord [options] [epochs]
+    ```
+The trained 3D CNNs and test results from the paper are stored in paper_results. The code to reproduce the plots from the paper can be found under paper_plots. This code uses the data from paper_results.
 
 Achknowledgements
 -----------------
@@ -54,7 +69,7 @@ If you use any part of this repository please cite the following paper:
 ```text
 [Bibtex Citation]
 ```
-When using `runSimulations.py` or `SaliencyMaps.py` please also cite both of the following papers to ackknowledge [21cmFAST][21cmFAST]
+When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` please also cite both of the following papers to ackknowledge [21cmFAST][21cmFAST]
     
 ```
 @article{Murray_2020,
@@ -120,5 +135,21 @@ When using any file in `mock_creation` please also cite the following papers and
    year={2014},
    month={Jan},
    pages={66}
+}
+```
+When using `create_mocks.py` please also cite the following paper for using powerbox
+
+```
+@article{Murray2018,
+  doi = {10.21105/joss.00850},
+  url = {https://doi.org/10.21105/joss.00850},
+  year = {2018},
+  publisher = {The Open Journal},
+  volume = {3},
+  number = {28},
+  pages = {850},
+  author = {Steven G. Murray},
+  title = {powerbox: A Python package for creating structured fields with isotropic power spectra},
+  journal = {Journal of Open Source Software}
 }
 ```

@@ -11,11 +11,11 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
 
     # Additional test labels and predictions for opt and mod mocks. Only required for Figure 2
     if inlet_diagram:
-        with np.load("../paper_results/3DOptMock6Par/TestValues.npz") as data:
+        with np.load("../paper_results/3d_optmock_6par/test_values.npz") as data:
             labels2 = data["test_labels"]
             pred2 = data["test_pred"]
 
-        with np.load("../paper_results/3DModMock6Par/TestValues.npz") as data:
+        with np.load("../paper_results/3d_modmock_6par/test_values.npz") as data:
             labels3 = data["test_labels"]
             pred3 = data["test_pred"]
 
@@ -162,10 +162,10 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
 
 if __name__=="__main__":
     # Create the paper scatter plots
-    plot("output/ScatterPlots/CompDiagrams_","../paper_results/3DSim6Par/TestValues.npz",cbar=True,inlet_diagram=True,vmax=17) # Figure 2
-    plot("output/ScatterPlots/AxisHists_","../paper_results/3DSim6Par/TestValues.npz",cbar=True,axis_hists=True,vmax=17,vmax_outer=25) # Figure 3
-    plot("output/ScatterPlots/SimMockTransfer_","../paper_results/TransferSimCNNMockData/TestValues.npz",cbar=True,vmax=15) # Figure B1, right
-    plot("output/ScatterPlots/MockSimTransfer_","../paper_results/TransferMockCNNSimData/TestValues.npz",cbar=False,vmax=15) # Figure B1, left
-    plot("output/ScatterPlots/SimMockTransfer_","../paper_results/TransferSimCNNMockData/TestValues.npz",cbar=True,vmax=15,inlet_scatter=["OMm","WDM",0.3,4]) # Figure 4, right
-    plot("output/ScatterPlots/MockSimTransfer_","../paper_results/TransferMockCNNSimData/TestValues.npz",cbar=False,vmax=15,inlet_scatter=["OMm","WDM",0.3,4]) # Figure 4, left
+    plot("output/scatter_plots/compdiagrams_","../paper_results/3d_sim_6par/test_values.npz",cbar=True,inlet_diagram=True,vmax=17) # Figure 2
+    plot("output/scatter_plots/axishists_","../paper_results/3d_sim_6par/test_values.npz",cbar=True,axis_hists=True,vmax=17,vmax_outer=25) # Figure 3
+    plot("output/scatter_plots/sim_mock_transfer_","../paper_results/transfer_simCNN_mockData/test_values.npz",cbar=True,vmax=15) # Figure B1, right
+    plot("output/scatter_plots/mock_sim_transfer_","../paper_results/transfer_mockCNN_simData/test_values.npz",cbar=False,vmax=15) # Figure B1, left
+    plot("output/scatter_plots/sim_mock_transfer_","../paper_results/transfer_simCNN_mockData/test_values.npz",cbar=True,vmax=15,inlet_scatter=["OMm","WDM",0.3,4]) # Figure 4, right
+    plot("output/scatter_plots/mock_sim_transfer_","../paper_results/transfer_mockCNN_simData/test_values.npz",cbar=False,vmax=15,inlet_scatter=["OMm","WDM",0.3,4]) # Figure 4, left
     
