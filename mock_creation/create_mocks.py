@@ -4,7 +4,7 @@ import optparse, math, sys, glob, os
 from powerbox.dft import fft, ifft
 import py21cmfast as p21c
 
-# Tool for efficient mock creation. mockFactory sorts the files in ../simulations/output/ alphabetically and creates mocks for file number N
+# Tool for efficient mock creation. Creates mocks for all light-cone files matching the pattern given by the data option and stores them in an output folder
 o = optparse.OptionParser()
 o.set_usage('create_mocks.py [options]')
 
@@ -90,7 +90,6 @@ for fl in bare_lc:
     # Create mocks for the tfrecords file number N as specified by the user
     dataset = tf.data.TFRecordDataset(fl)
     dataset = dataset.map(parse_function,num_parallel_calls=tf.data.experimental.AUTOTUNE)
-    #ds_numpy = tfds.as_numpy(dataset)
     # For each light-cone in the tfrecords file
     for ex in dataset.as_numpy_iterator():
         delta_T=ex[0]
@@ -105,7 +104,7 @@ for fl in bare_lc:
         sim_lightcone=p21c.LightCone(5.,user_params,cosmo_params,astro_params,flag_options,0,{"brightness_temp":delta_T},35.05)
         redshifts=sim_lightcone.lightcone_redshifts
     
-        # Calculate the length of each box that was used to create the light-cone. Each box is associated with a single redshift and uses the calc_sense output file for the respective frequency
+        # Calculate the length of each box. Each box is associated with a single redshift and uses the calc_sense output file for the respective frequency
         box_len=np.array([])
         y=0
         z=0
