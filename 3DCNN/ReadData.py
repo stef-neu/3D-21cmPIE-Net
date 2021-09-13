@@ -15,7 +15,7 @@ class ReadData():
         else:
             self.paras=6
   
-    # Function for parsing our tf.records files. We may apply our filters now if we didn't do it during the simulations
+    # Function for parsing our tf.records files. We may apply our filters now if we haven't done so during the simulations
     def parse_function(self,files):
         keys_to_features = {"label":tf.io.FixedLenFeature((self.paras),tf.float32),
                             "image":tf.io.FixedLenFeature((),tf.string),
