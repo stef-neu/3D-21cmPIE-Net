@@ -7,7 +7,7 @@ o = optparse.OptionParser()
 o.set_usage('runCNN.py [options] [epochs]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
-             help="If true, assumes an astro-only dataset with 4 labels per lightcone")
+             help="If true, assumes an astro-only dataset with 4 labels per light-cone")
 
 o.add_option('--data', dest='data', default="../simulations/output/*.tfrecord",
              help="File pattern for the light-cone files")
