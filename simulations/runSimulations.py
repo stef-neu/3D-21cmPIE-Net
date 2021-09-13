@@ -18,7 +18,7 @@ o.add_option('--threads', dest='threads', default=1, type=int,
              help="Number of threads used for simulations.")
 
 o.add_option('--saliency', dest='sal', default=False, action="store_true",
-             help="Use this flag to produce the light-cones required for paper_plots/SaliencyMaps.py. If this flag is set then N_runs specifies the number of runs with the SAME set of parameters")
+             help="Use this flag to produce the light-cones required for paper_plots/saliency_maps.py. If this flag is set then N_runs specifies the number of runs with the SAME set of parameters")
 
 opts, args = o.parse_args(sys.argv[1:])
 
@@ -37,18 +37,18 @@ if not recalculate_redshifts:
       redshifts.sort()
 
 if opts.sal:
-   # Produce light-cones for ../paper_plots/SaliencyMaps.py                                               
+   # Produce light-cones for ../paper_plots/SaliencyMaps.py 
    dest="../paper_plots/input/"
    os.makedirs(dest, exist_ok=True)
-   writer = tf.io.TFRecordWriter(dest+'BareSim.tfrecord')
+   writer = tf.io.TFRecordWriter(dest+'bare_sim.tfrecord')
 else:
-   # Do not overwrite existing files                                                                      
+   # Do not overwrite existing files 
    dest="output/"
    os.makedirs(dest, exist_ok=True)
    i=1
-   while(dest+'Run'+str(i)+'.tfrecord' in glob.glob(dest+"*")):
+   while(dest+'run'+str(i)+'.tfrecord' in glob.glob(dest+"*")):
       i+=1
-   writer = tf.io.TFRecordWriter(dest+'Run'+str(i)+'.tfrecord')
+   writer = tf.io.TFRecordWriter(dest+'run'+str(i)+'.tfrecord')
 
 j=0
 os.makedirs("_cache", exist_ok=True)
@@ -57,7 +57,7 @@ while j<int(args[0]):
    cache_tools.clear_cache(direc="_cache")
 
    if opts.sal:
-      # Produce light-cones for ../paper_plots/SaliencyMaps.py with the following parameters              
+      # Produce light-cones for ../paper_plots/SaliencyMaps.py with the following parameters 
       WDM=2.
       OMm=0.3
       E0=500.
@@ -66,14 +66,14 @@ while j<int(args[0]):
       Zeta=30.
       print("run number = " + str(j))
       print("m_WDM = "+str(WDM))
-      print("OMm = "+str(OMm))
-      print("E0 = "+str(E0))
-      print("LX = "+str(LX))
-      print("Tvir = "+str(Tvir))
-      print("Zeta = "+str(Zeta))
+      print("Omega_m = "+str(OMm))
+      print("E_0 = "+str(E0))
+      print("L_X = "+str(LX))
+      print("T_vir = "+str(Tvir))
+      print("zeta = "+str(Zeta))
 
    else:
-      # Random sampling over parameter ranges                                                             
+      # Random sampling over parameter ranges
       WDM=random.uniform(0.3,10.0)
       OMm=((0.02242 + 0.11933) / 0.6766 ** 2 if opts.ao else random.uniform(0.2,0.4))
       E0=random.uniform(100,1500)
@@ -82,11 +82,11 @@ while j<int(args[0]):
       Zeta=random.uniform(10,250)
       print("run number = " + str(j))
       print("m_WDM = "+str(WDM))
-      print("OMm = "+str(OMm))
-      print("E0 = "+str(E0))
-      print("LX = "+str(LX))
-      print("Tvir = "+str(Tvir))
-      print("Zeta = "+str(Zeta))
+      print("Omega_m = "+str(OMm))
+      print("E_0 = "+str(E0))
+      print("L_X = "+str(LX))
+      print("T_vir = "+str(Tvir))
+      print("zeta = "+str(Zeta))
 
   # Light-cone creation
    p21c.inputs.global_params.M_WDM = WDM
@@ -99,7 +99,6 @@ while j<int(args[0]):
       direc='_cache',
       write = recalculate_redshifts # Set to false to prevent the program from saving huge amounts of data to the disk during runtime. Set to true if memory is a concern.
    )
-   
    # Only required if light-cone specific parameters were changed
    if recalculate_redshifts:
       redshifts = []
@@ -123,24 +122,24 @@ while j<int(args[0]):
 
    # Save the light-cones to a tfrecords file
    attr=getattr(lightcone,"brightness_temp")
-   LClist = tf.train.BytesList(value=[attr[:,:,:2350].flatten().astype(np.float16).tobytes()])
-   LBlist = tf.train.FloatList(value=[WDM,OMm,LX,E0,Tvir,Zeta])
-   Taulist = tf.train.FloatList(value=[tau])
-   Zlist = tf.train.FloatList(value=redshifts)
+   lc_list = tf.train.BytesList(value=[attr[:,:,:2350].flatten().astype(np.float16).tobytes()])
+   lb_list = tf.train.FloatList(value=[WDM,OMm,LX,E0,Tvir,Zeta])
+   taulist = tf.train.FloatList(value=[tau])
+   zlist = tf.train.FloatList(value=redshifts)
    gxHlist = tf.train.FloatList(value=gxH)
-   image = tf.train.Feature(bytes_list=LClist)
-   label = tf.train.Feature(float_list=LBlist)
-   Tau = tf.train.Feature(float_list=Taulist)
-   Redshift = tf.train.Feature(float_list=Zlist)
+   image = tf.train.Feature(bytes_list=lc_list)
+   label = tf.train.Feature(float_list=lb_list)
+   tau = tf.train.Feature(float_list=taulist)
+   redshift = tf.train.Feature(float_list=zlist)
    gxH = tf.train.Feature(float_list=gxHlist)
-   LCdict={
+   lc_dict={
       'image': image,
       'label': label,
-      'tau': Tau,
-      'z': Redshift,
+      'tau': tau,
+      'z': redshift,
       'gxH': gxH,
    }
-   features = tf.train.Features(feature=LCdict)
+   features = tf.train.Features(feature=lc_dict)
    labeled_data = tf.train.Example(features=features)
    writer.write(labeled_data.SerializeToString())
    j+=1 
