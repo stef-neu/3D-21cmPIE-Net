@@ -6,7 +6,7 @@ class Model():
     def __init__(self,shape):
         self.inputs = keras.Input(shape=shape)
 
-    def buildModel(self,n_parameters):
+    def build_model(self,n_parameters):
         # Convolution and pooling layers
         x = layers.Conv3D(filters=32, kernel_size=(3,3,102),strides=(1,1,102), activation="relu")(self.inputs)
         x = layers.Conv3D(filters=32, kernel_size=(3,3,2), activation="relu")(x)
@@ -33,18 +33,19 @@ class Model():
                            loss=keras.losses.MeanSquaredError())
         return self.model
 
-    def fitModel(self, training_data, test_data, **kwargs):
+    def fit_model(self, training_data, test_data, **kwargs):
         # Train on the given dataset and calculate test scores
         self.model.fit(training_data,**kwargs)
         print("Evaluating test scores")
         test_scores = self.model.evaluate(test_data)
         print("Test loss: " + str(test_scores))
+        return self.model
 
-    def saveModel(self, location):
+    def save_model(self, location):
         self.model.save(location)
         return self.model
         
-    def loadModel(self, location):
+    def load_model(self, location):
         self.model = keras.models.load_model(location)
         self.model.summary()
         return self.model
