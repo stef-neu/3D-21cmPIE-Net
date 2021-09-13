@@ -19,16 +19,16 @@ opts, args = o.parse_args(sys.argv[1:])
 
 if __name__ == "__main__":
     # Read in the dataset
-    rd=ReadData.ReadData(x=140,y=140,z=2350)
+    rd=ReadData.ReadData(x=140,y=140,z=2350,astro_only=opts.ao)
     rd.read(opts.data)
     train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=8,cache=False)
 
     # Create a new neural network model or load a pretrained one
-    modelHandler=Model.Model(shape=(140, 140, 2350, 1))
+    model_handler=Model.Model(shape=(140, 140, 2350, 1))
     if opts.cont:
-        model=modelHandler.loadModel("output/models/3D_21cmPIE_Net")
+        model=model_handler.load_model("output/models/3D_21cmPIE_Net")
     else:
-        model=modelHandler.buildModel(n_parameters=(4 if opts.ao else 6))
+        model=model_handler.build_model(n_parameters=(4 if opts.ao else 6))
 
     # Clear out any prior log data
     try:
@@ -42,16 +42,16 @@ if __name__ == "__main__":
     early_stop_callback = keras.callbacks.EarlyStopping(monitor="val_loss",min_delta=0.0001,patience=10,restore_best_weights=True)
 
     # Run the neural network
-    modelHandler.fitModel(
+    model_handler.fit_model(
         training_data=train_ds,
         test_data=test_ds,
         epochs=int(args[0]),
         callbacks=[tensorboard_callback, early_stop_callback,plateau_callback],
         validation_data=vali_ds,
         )
-    model=modelHandler.saveModel("output/models/3D_21cmPIE_Net")
+    model=model_handler.save_model("output/models/3D_21cmPIE_Net")
     
     # Calculate R^2 values and create scatter plots.
-    plot=Plotting.Plotting(model,test_ds,astroOnly=opts.ao)
-    plot.calculateR2()
+    plot=Plotting.Plotting(model,test_ds,astro_only=opts.ao)
+    plot.calculate_r2()
     plot.plot()
