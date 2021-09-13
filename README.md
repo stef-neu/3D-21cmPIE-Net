@@ -30,7 +30,7 @@ Installation
   
 4. When using `runSimulations.py` or `SaliencyMaps.py` install [21cmFAST][21cmFAST]
 
-4. When using `create_mocks.py` install [powerbox][powerbox]
+5. When using `create_mocks.py` install [powerbox][powerbox]
 
 6. When using `SaliencyMaps.py` install [tf-keras-vis][tf-keras-vis]
 
@@ -137,7 +137,7 @@ When using any file in `mock_creation` please also cite the following papers and
    pages={66}
 }
 ```
-When using `create_mocks.py` please also cite the following paper for using powerbox
+When using `create_mocks.py` please also cite the following paper for using [powerbox][powerbox]
 
 ```
 @article{Murray2018,
