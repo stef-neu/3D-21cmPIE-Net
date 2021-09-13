@@ -28,7 +28,7 @@ def parse_function(files):
     image = tf.reshape(image,(140,140,2350))
     return image, parsed_features["label"] # Image, m_WDM,Omega_m,L_X,E_0,T_vir,zeta
 
-# Plot the saliency maps over the light-cones. Axis scales depend on the value of Omega_m. This function expects all lightcones to have the same Omega_m
+# Plot the saliency maps over the light-cones. Axis scales depend on the value of Omega_m. This function expects all light-cones to have the same Omega_m
 def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
     # Define parameter names, ranges and latex code
     parameter_list=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
@@ -148,9 +148,10 @@ if __name__=="__main__":
     sim_data = np.array(list(sim_dataset.as_numpy_iterator()))
     mock_data = np.array(list(mock_dataset.as_numpy_iterator()))
     
-    # Here Omega_m should be equal for all lightcones.
+    # Here Omega_m should be equal for all light-cones.
     OMm=sim_data[0][1][1]
-    # Calculate and plot saliency maps for the requested parameters for the provided 3D CNNs which were trained on bare simulations and opt mocks respectively. The saliency for each lightcone in simData and for each lightcone in mockData will be stacked to reduce effects from local fluctuations. Therefore all lightcones in simData and all lightcones in mockData should be created using the same parameters.
-    # Parameters = m_WDM, Omega_m, L_X, E_0, T_vir, zeta
+    # Calculate and plot saliency maps for the requested parameters for the provided 3D CNNs which were trained on bare simulations and opt mocks respectively.
+    # The saliency for each light-cone in sim_data and for each light-cone in mock_data will be stacked to reduce effects from local fluctuations.
+    # Therefore all light-cones in sim_data and all light-cones in mock_data should be created using the same parameters.
     create_saliency_maps("output/saliency_maps/dm_saliency.png",sim_data[:,0],sim_model,mock_data[:,0],mock_model,parameters=[0,1],OMm=OMm) # Figure 5
     create_saliency_maps("output/saliency_maps/astro_saliency.png",sim_data[:,0],sim_model,mock_data[:,0],mock_model,parameters=[2,3,4,5],OMm=OMm) # Figure C1
