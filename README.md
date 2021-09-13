@@ -1,6 +1,6 @@
 # 3D-21cmPIE-Net
 
-Repository for reproducing the results from [Arxiv Link]
+Repository for reproducing the results from [Arxiv Link].
 
 Installation
 ------------
@@ -69,7 +69,7 @@ If you use any part of this repository please cite the following paper:
 ```text
 [Bibtex Citation]
 ```
-When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` please also cite both of the following papers to ackknowledge [21cmFAST][21cmFAST]
+When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` please also cite both of the following papers to ackknowledge [21cmFAST][21cmFAST].
     
 ```
 @article{Murray_2020,
@@ -137,7 +137,7 @@ When using any file in `mock_creation` please also cite the following papers and
    pages={66}
 }
 ```
-When using `create_mocks.py` please also cite the following paper for using [powerbox][powerbox]
+When using `create_mocks.py` please also cite the following paper for using [powerbox][powerbox].
 
 ```
 @article{Murray2018,
