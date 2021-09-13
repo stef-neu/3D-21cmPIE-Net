@@ -7,7 +7,7 @@ import os
 if __name__ == "__main__":
     # Load trained model
     model = keras.models.load_model("../paper_results/3d_optmock_6par/models/3D_21cmPIE_Net")
-    # Plot each of the 32 filters in the first convolutional layer with weights averaged over the first two dimensions
+    # Plot each of the 32 filters from the first convolutional layer with weights averaged over the first two dimensions
     for y in range(32):
         weights = model.layers[1].weights[0].numpy()
         weights = weights.reshape(3,3,102,32)[:,:,:,y]
