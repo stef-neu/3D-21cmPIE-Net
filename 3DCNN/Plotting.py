@@ -26,7 +26,7 @@ class Plotting():
                 else:
                     self.test_labels = np.append(self.test_labels,label.numpy(),axis=0)
 
-            # Save the test labels and predictions so we don't have to do a complete rerun just to modify the plots
+            # Save the test labels and predictions for further usage
             os.makedirs("output", exist_ok=True)
             np.savez("output/test_values.npz",**{"test_labels":self.test_labels, "test_pred":self.test_pred})
 
@@ -42,7 +42,7 @@ class Plotting():
     def plot(self,path="output/scatter_plots"):
         os.makedirs(path, exist_ok=True)
         for para in range(len(self.parameters)):
-            # Go back from [0,1] to the initial parameter ranges
+            # Rescale the parameter values from [0,1] to their original scale
             self.test_pred[:,para]=[x*(self.parameters[para][2]-self.parameters[para][1])+self.parameters[para][1] for x in self.test_pred[:,para]]
             self.test_labels[:,para]=[x*(self.parameters[para][2]-self.parameters[para][1])+self.parameters[para][1] for x in self.test_labels[:,para]]
             fig,ax = plt.subplots()
