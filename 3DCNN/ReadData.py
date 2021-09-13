@@ -3,14 +3,14 @@ import numpy as np
 import glob
 
 class ReadData():
-    def __init__(self, x,y,z,apply_filter=False, astroOnly=False):
+    def __init__(self, x,y,z,apply_filter=False, astro_only=False):
         # Setup
         self.height=x
         self.width=y
         self.img_length=z
         self.autotune=tf.data.experimental.AUTOTUNE
         self.apply_filter=apply_filter
-        if astroOnly:
+        if astro_only:
             self.paras=4
         else:
             self.paras=6
