@@ -59,10 +59,10 @@ while j<int(args[0]):
    if opts.sal:
       # Produce light-cones for ../paper_plots/SaliencyMaps.py with the following parameters 
       WDM=2.
-      OMm=0.3
+      OMm=0.31
       E0=500.
       LX=40.
-      Tvir=4.
+      Tvir=4.7
       Zeta=30.
    else:
       # Random sampling over parameter ranges
