@@ -28,7 +28,7 @@ Installation
   python3 -m pip install .
   ```
   
-4. When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` install [21cmFAST][21cmFAST]
+4. When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` install [21cmFAST][21cmFAST] 3.1.2
 
 5. When using `create_mocks.py` install [powerbox][powerbox]
 
