@@ -30,14 +30,11 @@ Installation
   
 4. When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` install [21cmFAST][21cmFAST] 3.1.2
 
-5. When using `create_mocks.py` install [powerbox][powerbox]
-
-6. When using `SaliencyMaps.py` install [tf-keras-vis][tf-keras-vis]
+5. When using `SaliencyMaps.py` install [tf-keras-vis][tf-keras-vis]
 
 [21cmFAST]: https://github.com/21cmfast/21cmFAST
 [tf-keras-vis]: https://github.com/keisen/tf-keras-vis
 [21cmSense]: https://github.com/jpober/21cmSense
-[powerbox]: https://github.com/steven-murray/powerbox
 
 Usage
 -----
@@ -135,21 +132,5 @@ When using any file in `mock_creation` please also cite the following papers and
    year={2014},
    month={Jan},
    pages={66}
-}
-```
-When using `create_mocks.py` please also cite the following paper for using [powerbox][powerbox].
-
-```
-@article{Murray2018,
-  doi = {10.21105/joss.00850},
-  url = {https://doi.org/10.21105/joss.00850},
-  year = {2018},
-  publisher = {The Open Journal},
-  volume = {3},
-  number = {28},
-  pages = {850},
-  author = {Steven G. Murray},
-  title = {powerbox: A Python package for creating structured fields with isotropic power spectra},
-  journal = {Journal of Open Source Software}
 }
 ```
