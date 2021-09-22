@@ -1,7 +1,6 @@
 import numpy as np
 import tensorflow as tf
 import optparse, math, sys, glob, os
-from powerbox.dft import fft, ifft
 import py21cmfast as p21c
 
 # Tool for efficient mock creation. Creates mocks for all light-cone files matching the pattern given by the data option and stores them in an output folder
