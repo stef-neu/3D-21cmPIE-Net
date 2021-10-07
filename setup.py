@@ -10,7 +10,7 @@ setup(
     license="BSD",
     install_requires = [
         "numpy",
-        "tensorflow>2.2",
+        "tensorflow-gpu>2.2",
         "matplotlib",
         "scipy",
     ],
