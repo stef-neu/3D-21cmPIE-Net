@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import functools, os
+from scipy.stats import norm
 
 def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,vmax=0,vmax_outer=0,inlet_scatter=False):
     # Load npz file with test labels and predictions from a neural network
