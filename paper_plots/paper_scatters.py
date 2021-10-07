@@ -20,7 +20,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
             pred3 = data["test_pred"]
 
     # Define the name, parameter range and latex code for each parameter
-    parameters=[["WDM",0.3,10,"$m_{WDM}$"],["OMm",0.2,0.4,"$\Omega_m$"],["LX",38,42,"$L_X$"],["E0",100,1500,"$E_0$"],["Tvir",4,5.3,"$T_{vir}$"],["Zeta",10,250,"$\zeta$"]]
+    parameters=[["WDM",0.3,10,"$m_{WDM}$",2,"$_{m_{WDM}(<1.8)}=$"],["OMm",0.2,0.4,"$\Omega_m$",4,"$_{\Omega_m}$"],["LX",38,42,"$L_X$",2,"$_{L_X}$"],["E0",100,1500,"$E_0$",0,"$_{E_0 (<800)}=$"],["Tvir",4,5.3,"$T_{vir}$",2,"$_{T_{vir}}$"],["Zeta",10,250,"$\zeta$",1,"$_{\zeta}$"]]
 
     # Revert parameter normalizations to the [0,1] range
     for para in range(6):
@@ -47,7 +47,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
             spacing = 0.03
             outwidth = 0.2
             rect_scatter = [left, bottom, width, height]
-            rect_histx = [left, bottom + height + spacing, width, (0.18 if cbar else outwidth)]
+            rect_histx = [left, bottom + height + spacing, width, (0.18 if cbar else 0.17)]
             rect_histy = [left + width + spacing, bottom, outwidth, height]
             ax = fig.add_axes(rect_scatter)
             # Create the main plot and add axis histograms
@@ -125,6 +125,21 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
 
             # Show pred-label distributions for simulations, opt mocks and mod mocks. The distributions are shown in an inserted histhogram.
             if inlet_diagram:
+                # Standard deviations
+                if para==3:
+                    diff=[y-x for x,y in zip(test_labels[:,para],test_pred[:,para]) if x<800]
+                    (mu, sigma)=norm.fit(diff)
+                    text="$\sigma"+parameters[para][5][1:]+str(np.round(sigma,decimals=parameters[para][4]))
+                elif para==0:
+                    diff=[y-x for x,y in zip(test_labels[:,para],test_pred[:,para]) if x<1.8]
+                    (mu, sigma)=norm.fit(diff)
+                    text="$\sigma"+parameters[para][5][1:]+str(np.round(sigma,decimals=parameters[para][4]))
+                else:
+                    diff=test_pred[:,para]-test_labels[:,para]
+                    (mu, sigma)=norm.fit(diff)
+                    text="$\sigma"+parameters[para][5][1:]+"="+str(np.round(sigma,decimals=parameters[para][4]))
+                ax.text((parameters[para][2]-parameters[para][1])*0.05+parameters[para][1],(parameters[para][2]-parameters[para][1])*0.9+parameters[para][1],text,color="w",fontsize=14)
+
                 axins = inset_axes(ax, width="35%", height="35%", loc=4, borderpad=2)
                 axins.hist((test_pred[:,para]-test_labels[:,para])/(parameters[para][2]-parameters[para][1]),bins=51,label="Sim",alpha=1,edgecolor="red",histtype="step")
                 axins.hist((pred2[:,para]-labels2[:,para])/(parameters[para][2]-parameters[para][1]),bins=51,label="Mock",alpha=1,edgecolor="blue",histtype="step")
