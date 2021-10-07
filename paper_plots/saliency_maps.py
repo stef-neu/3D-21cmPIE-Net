@@ -69,18 +69,19 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
         if x>0 and x<2*len(parameters)-1:
             ax[x].set_xticks([])
             ax[x].set_xlabel("")
+            ax[x].tick_params(labelsize=12)
         ax[x].text(10,10,"$\delta "+parameter_list[para][3][1:],color="w",fontsize=14)
         ax[x].set_ylabel("")
-    fig.text(0.01,0.59+0.0275*len(parameters),"y-axis [Mpc]",rotation="vertical")
-    fig.text(0.01,0.20+0.005*len(parameters),"y-axis [Mpc]",rotation="vertical")
+    fig.text(0.01,0.62+0.02*len(parameters),"y-axis [Mpc]",rotation="vertical",fontsize=12)
+    fig.text(0.01,0.23-0.005*len(parameters),"y-axis [Mpc]",rotation="vertical",fontsize=12)
     ax[0].xaxis.tick_top()
-    ax[0].set_xlabel('Frequency [MHz]')    
+    ax[0].set_xlabel('Frequency [MHz]',fontsize=12)    
     ax[0].xaxis.set_label_position('top')
-    ax[x].set_xlabel("Redshift")
+    ax[x].set_xlabel("Redshift",fontsize=12)
     plt.tight_layout()
     for y in range(len(parameters)):
-        pos1=ax[x-y].get_position().get_points()+[[0.04,0.08/len(parameters)],[0.04,0.08/len(parameters)+0.02]]
-        pos2=ax[y].get_position().get_points()+[[0.04,0.08/len(parameters)],[0.04,0.08/len(parameters)]]
+        pos1=ax[x-y].get_position().get_points()+[[0.02,0.08/len(parameters)-0.02],[0.02,0.08/len(parameters)-0.02]]
+        pos2=ax[y].get_position().get_points()+[[0.02,0.08/len(parameters)-0.03],[0.02,0.08/len(parameters)-0.03]]
         ax[x-y].set_position(Bbox(pos1-[[0,0.018],[0,0.018]]))
         ax[y].set_position(Bbox(pos2+[[0,0.018],[0,0.018]]))
         ax[y].text(10,150,"Sim",color="w",fontsize=14)
@@ -89,7 +90,8 @@ def plot(filename,sim_lightcone,mock_lightcone,parameters,saliency_maps=False):
     # Use a colorbar with the "EoR" cmap from 21cmFAST
     cbar = fig.colorbar(cm.ScalarMappable(norm=colors.Normalize(vmin=-150,vmax=30), cmap="EoR"), ax=ax,aspect=10*len(parameters))   
     cbar_label = r"$\delta T_B$ [mK]"
-    cbar.ax.set_ylabel(cbar_label)
+    cbar.ax.set_ylabel(cbar_label,fontsize=12)
+    cbar.ax.tick_params(labelsize=12)
     os.makedirs(os.path.dirname(filename),exist_ok=True)
     plt.savefig(filename)
     plt.close()
