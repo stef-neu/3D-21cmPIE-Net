@@ -12,6 +12,7 @@ setup(
         "numpy",
         "tensorflow>2.2",
         "matplotlib",
+        "scipy",
     ],
     python_requires='>=3.6',
 )
