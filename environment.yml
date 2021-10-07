@@ -6,3 +6,4 @@ dependencies:
   - numpy
   - matplotlib
   - tensorflow-gpu>2.2
+  - scipy
