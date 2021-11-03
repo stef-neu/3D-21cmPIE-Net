@@ -1,5 +1,7 @@
 # 3D-21cmPIE-Net
 
+'3D 21cm Parameter InfErence Network'
+
 Repository for reproducing the results from [Arxiv Link].
 
 Installation
@@ -22,6 +24,8 @@ Installation
     python3 -m pip install -r requirements/requirements.txt
     ```
 
+    Note: For installation on MacOS (less tested, tensorflow CPU), please replace 'tensorflow-gpu' by 'tensorflow' in environment.yml and setup.py, or for pip-based installation in requirements/requirements.txt
+
 3. Install `3D-21cmPIE-Net`
 
   ```
@@ -38,29 +42,32 @@ Installation
 
 Usage
 -----
-1. Produce a dataset in `simulations` with a size of N lightcones. It is recommended to not produce large datasets with a single run. runSimulations.py creates a new output file for each run.
+1. Produce a dataset by default saved to `simulations/output` with a size of N lightcones. It is recommended to not produce large datasets with a single run. runSimulations.py creates a new output file for each run.
     ```
-    python3 runSimulations.py [options] [N_lightcones]
+    cd simulations
+    python runSimulations.py [options] [N_lightcones]
     ```
+    Folders 'simulations/output' and 'simulations/_cache' are created. 
     
 A. Train the 3D CNN on bare simulations:
    - Train the neural network in `3DCNN`. By default this takes all output files from runSimulations.py as input.
        ```
-       python3 runCNN.py [options] [epochs]
+       cd 3DCNN
+       python runCNN.py [options] [epochs]
        ```
         
 B: Train the 3D CNN on opt mocks:
   - Create opt mocks in `mock_creation`.
     ```
-    python3 create_mocks.py [options]
+    python create_mocks.py [options]
     ```
   - Train the neural network in `3DCNN`. Here the input files have to be specified.
     ```
-    python3 runCNN.py --data=../mock_creation/output/*.tfrecord [options] [epochs]
+    python runCNN.py --data=../mock_creation/output/*.tfrecord [options] [epochs]
     ```
 The trained 3D CNNs and test results from the paper are stored in paper_results. The code to reproduce the plots from the paper can be found under paper_plots. This code uses the data from paper_results.
 
-Achknowledgements
+Acknowledgements
 -----------------
 If you use any part of this repository please cite the following paper:
 ```text

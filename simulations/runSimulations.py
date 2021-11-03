@@ -4,21 +4,22 @@ import tensorflow as tf
 import logging, sys, glob, random, optparse, os
 import py21cmfast as p21c
 from py21cmfast import cache_tools
+import time
 
 o = optparse.OptionParser()
-o.set_usage('runSimulations.py [options] [N_runs]')
+o.set_usage('runSimulations.py [options] [N_lightcones]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
-             help="Produces an astro-only dataset in a CDM universe by only sampling LX,E0,Tvir and zeta.")
+             help="Produces an astro-only dataset in a CDM universe by sampling LX,E0,Tvir and zeta (default: additional sampling of Omega_m and n_WDM).")
 
 o.add_option('--filter', dest='filter', default=True, action="store_false",
-             help="When true it applies tau and global neutral fraction filters. If a run fails the filters it will be restarted with new random initial parameters.")
+             help="When set only lightcones that obey (observationally motivated) cuts in tau and global neutral fraction pass. For now, if a lightcone does not pass, the run will  be restarted with new random initial parameters.")
 
 o.add_option('--threads', dest='threads', default=1, type=int,
              help="Number of threads used for simulations.")
 
 o.add_option('--saliency', dest='sal', default=False, action="store_true",
-             help="Use this flag to produce the light-cones required for paper_plots/saliency_maps.py. If this flag is set then N_runs specifies the number of runs with the SAME set of parameters")
+             help="Use this flag to produce the light-cones required for paper_plots/saliency_maps.py. If this flag is set then N_lightcones specifies the number of lightcones with the SAME set of parameters")
 
 opts, args = o.parse_args(sys.argv[1:])
 
@@ -27,9 +28,10 @@ logger.setLevel(logging.INFO)
     
 # Settings
 p21c.inputs.global_params.P_CUTOFF = not opts.ao # CDM universe for astro-only dataset
-height_dim = 140 # Number of pixels in space dimensions
+height_dim = 140 # Number of pixels
 box_len = 200 # Box size in Mpc
-recalculate_redshifts = False # The redshifts associated with each box depend on the light-cone parameters, (e.g. box_len, height_dim, redshift, max_redshift). For the given settings they are stored in redshifts5.npy
+z_min = 5.0 # lowest redshift box
+recalculate_redshifts = False # The redshifts associated with each box depend on the light-cone parameters, (e.g. box_len, height_dim, array of redshifts). For the given settings they are stored in redshifts5.npy
 
 if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
@@ -55,6 +57,7 @@ os.makedirs("_cache", exist_ok=True)
 while j<int(args[0]):
    # Cleanup
    cache_tools.clear_cache(direc="_cache")
+   startTime = time.time()
 
    if opts.sal:
       # Produce light-cones for ../paper_plots/SaliencyMaps.py with the following parameters 
@@ -65,7 +68,7 @@ while j<int(args[0]):
       Tvir=4.7
       Zeta=30.
    else:
-      # Random sampling over parameter ranges
+      # Random sampling over prior parameter ranges
       WDM=random.uniform(0.3,10.0)
       OMm=((0.02242 + 0.11933) / 0.6766 ** 2 if opts.ao else random.uniform(0.2,0.4))
       E0=random.uniform(100,1500)
@@ -73,7 +76,7 @@ while j<int(args[0]):
       Tvir=random.uniform(4,5.3)
       Zeta=random.uniform(10,250)
    
-   print("run number = " + str(j))
+   print("lightcone No. = " + str(j))
    print("m_WDM = "+str(WDM))
    print("Omega_m = "+str(OMm))
    print("E_0 = "+str(E0))
@@ -84,15 +87,16 @@ while j<int(args[0]):
    # Light-cone creation
    p21c.inputs.global_params.M_WDM = WDM
    lightcone = p21c.run_lightcone(
-      redshift = 5.0,
+      redshift = z_min,
       cosmo_params = p21c.CosmoParams(OMm=OMm),
       astro_params = p21c.AstroParams(HII_EFF_FACTOR=Zeta,L_X=LX,NU_X_THRESH=E0,ION_Tvir_MIN=Tvir),
       user_params = {"HII_DIM": height_dim, "BOX_LEN": box_len,"PERTURB_ON_HIGH_RES":True,"N_THREADS":opts.threads,"USE_INTERPOLATION_TABLES": False},
       flag_options = {"USE_TS_FLUCT": True,"INHOMO_RECO":True},
       direc='_cache',
-      write = recalculate_redshifts # Set to false to prevent the program from saving huge amounts of data to the disk during runtime. Set to true if memory is a concern.
+      write = recalculate_redshifts # Set to false to prevent the program from saving huge amounts of data to the disk during runtime. Set to true if memory is not a concern.
+      # CH: might be better to separate the write-flag from recalculate_redshifts, or is it disentangled? test recalculate_redshifts true and write false
    )
-   # Only required if light-cone specific parameters were changed
+   # Only required if light-cone specific parameters changed
    if recalculate_redshifts:
       redshifts = []
       for boxname in p21c.cache_tools.list_datasets(kind="BrightnessTemp",direc="_cache"):
@@ -101,7 +105,7 @@ while j<int(args[0]):
       redshifts.sort()
       recalculate_redshifts=False
 
-   # Compute tau=optical debth to reionization
+   # Compute optical depth
    gxH=lightcone.global_xH
    gxH=gxH[::-1]
    tau=p21c.compute_tau(redshifts=redshifts,global_xHI=gxH)
@@ -136,6 +140,8 @@ while j<int(args[0]):
    labeled_data = tf.train.Example(features=features)
    writer.write(labeled_data.SerializeToString())
    j+=1 
+   executionTime = (time.time() - startTime)
+   print('Execution time in seconds: ' + str(executionTime))
 
 # Cleanup
 writer.close()
