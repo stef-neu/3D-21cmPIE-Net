@@ -4,6 +4,8 @@
 
 Repository for reproducing the results from [Arxiv Link].
 
+3D-21cmPIE-Net is trained to jointly infer astrophysical and (warm) dark matter parameters, as well as astrophysical parameters alone, from 3D lightcones of the 21cm signal during reionization and the cosmic dawn. This repository also provides further functionalities such as an interface to 21cmFAST for lightcone creation (incl. mock observed lightcones for noise levels derived by 21cmSense), for network training and evaluation, as well as for network interpretation via saliency maps.  
+
 Installation
 ------------
 1. Clone this repository
