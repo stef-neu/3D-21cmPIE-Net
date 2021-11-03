@@ -75,7 +75,7 @@ If you use any part of this repository please cite the following paper:
 ```text
 [Bibtex Citation]
 ```
-When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` please also cite both of the following papers to ackknowledge [21cmFAST][21cmFAST].
+When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` please also cite both of the following papers to acknowledge [21cmFAST][21cmFAST].
     
 ```
 @article{Murray_2020,
