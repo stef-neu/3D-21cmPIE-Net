@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import functools, os
-from scipy.stats import norm
 
 def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,vmax=0,vmax_outer=0,inlet_scatter=False):
     # Load npz file with test labels and predictions from a neural network
@@ -129,15 +128,15 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
                 # Standard deviations
                 if para==3:
                     diff=[y-x for x,y in zip(test_labels[:,para],test_pred[:,para]) if x<800]
-                    (mu, sigma)=norm.fit(diff)
+                    sigma=np.std(diff)
                     text="$\sigma"+parameters[para][5][1:]+str(np.round(sigma,decimals=parameters[para][4]))
                 elif para==0:
                     diff=[y-x for x,y in zip(test_labels[:,para],test_pred[:,para]) if x<1.8]
-                    (mu, sigma)=norm.fit(diff)
+                    sigma=np.std(diff)
                     text="$\sigma"+parameters[para][5][1:]+str(np.round(sigma,decimals=parameters[para][4]))
                 else:
                     diff=test_pred[:,para]-test_labels[:,para]
-                    (mu, sigma)=norm.fit(diff)
+                    sigma=np.std(diff)
                     text="$\sigma"+parameters[para][5][1:]+"="+str(np.round(sigma,decimals=parameters[para][4]))
                 ax.text((parameters[para][2]-parameters[para][1])*0.05+parameters[para][1],(parameters[para][2]-parameters[para][1])*0.9+parameters[para][1],text,color="w",fontsize=14)
 
