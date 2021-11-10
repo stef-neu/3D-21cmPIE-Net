@@ -31,7 +31,7 @@ p21c.inputs.global_params.P_CUTOFF = not opts.ao # CDM universe for astro-only d
 height_dim = 140 # Number of pixels
 box_len = 200 # Box size in Mpc
 z_min = 5.0 # lowest redshift box
-recalculate_redshifts = False # The redshifts associated with each box depend on the light-cone parameters, (e.g. box_len, height_dim, array of redshifts). For the given settings they are stored in redshifts5.npy
+recalculate_redshifts = True # CH False default # The redshifts associated with each box depend on the light-cone parameters, (e.g. box_len, height_dim, array of redshifts). For the given settings they are stored in redshifts5.npy
 
 if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
@@ -93,7 +93,7 @@ while j<int(args[0]):
       user_params = {"HII_DIM": height_dim, "BOX_LEN": box_len,"PERTURB_ON_HIGH_RES":True,"N_THREADS":opts.threads,"USE_INTERPOLATION_TABLES": False},
       flag_options = {"USE_TS_FLUCT": True,"INHOMO_RECO":True},
       direc='_cache',
-      write = recalculate_redshifts # Set to false to prevent the program from saving huge amounts of data to the disk during runtime. Set to true if memory is not a concern.
+      write = False # recalculate_redshifts # Set to false to prevent the program from saving huge amounts of data to the disk during runtime. Set to true if memory is not a concern.
       # CH: might be better to separate the write-flag from recalculate_redshifts, or is it disentangled? test recalculate_redshifts true and write false
    )
    # Only required if light-cone specific parameters changed

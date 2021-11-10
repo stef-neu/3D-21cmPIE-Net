@@ -55,7 +55,7 @@ A. Train the 3D CNN on bare simulations:
    - Train the neural network in `3DCNN`. By default this takes all output files from runSimulations.py as input.
        ```
        cd 3DCNN
-       python runCNN.py [options] [epochs]
+       python trainCNN.py [options] [epochs]
        ```
         
 B: Train the 3D CNN on opt mocks:
@@ -65,7 +65,7 @@ B: Train the 3D CNN on opt mocks:
     ```
   - Train the neural network in `3DCNN`. Here the input files have to be specified.
     ```
-    python runCNN.py --data=../mock_creation/output/*.tfrecord [options] [epochs]
+    python trainCNN.py --data=../mock_creation/output/*.tfrecord [options] [epochs]
     ```
 The trained 3D CNNs and test results from the paper are stored in paper_results. The code to reproduce the plots from the paper can be found under paper_plots. This code uses the data from paper_results.
 

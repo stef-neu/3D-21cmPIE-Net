@@ -4,7 +4,7 @@ import ReadData, Model, Plotting
 import shutil, optparse, sys
 
 o = optparse.OptionParser()
-o.set_usage('runCNN.py [options] [epochs]')
+o.set_usage('trainCNN.py [options] [epochs]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per light-cone")
@@ -19,12 +19,15 @@ opts, args = o.parse_args(sys.argv[1:])
 
 if __name__ == "__main__":
     # Read in the dataset
-    rd=ReadData.ReadData(x=140,y=140,z=2350,astro_only=opts.ao)
+    height_dim = 140 # spatial pixels 
+    lc_dim = 2350 # pixel in frequency direction
+    # CH test: dims can be changed, load dims from lc?
+    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao)
     rd.read(opts.data)
     train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=8,cache=False)
 
     # Create a new neural network model or load a pretrained one
-    model_handler=Model.Model(shape=(140, 140, 2350, 1))
+    model_handler=Model.Model(shape=(height_dim, height_dim, lc_dim, 1))
     if opts.cont:
         model=model_handler.load_model("output/models/3D_21cmPIE_Net")
     else:
