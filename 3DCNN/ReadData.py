@@ -31,18 +31,26 @@ class ReadData():
         else:
             return image[0:self.height,0:self.width,0:self.img_length], tf.stack([5.,5.,5.,5.,5.,5.])
       
-    def read(self,path,test_path=False):
+    def read(self,path,test_path=False,test_only=False):
         # Read in all files matching the given pattern.
-        paths = glob.glob(path)
+        if test_only and test_path:
+            paths = glob.glob(test_path)
+        else:
+            paths = glob.glob(path)
         np.random.shuffle(paths)
         print("Reading in "+str(len(paths))+" files.")
         ds = tf.data.TFRecordDataset(paths)
         ds = ds.map(self.parse_function,num_parallel_calls=self.autotune)
         if self.apply_filter:
             ds = ds.filter(lambda x,y: y[0]<=1)
+
+        # To evaluate the NN on a test dataset, only the test dataset is required                          
+        if test_only:
+            self.test_ds=ds
+            return self.test_ds
         
         # We may want to use a seperate test set
-        if test_path:
+        elif test_path:
             test_paths=glob.glob(test_path)
             self.test_ds = tf.data.TFRecordDataset(test_paths)
             self.test_ds = self.test_ds.map(self.parse_function,num_parallel_calls=self.autotune)
@@ -60,26 +68,32 @@ class ReadData():
         return self.train_ds, self.vali_ds, self.test_ds
 
     
-    def prepare_for_training(self, batch_size, cache=False):
+    def prepare_for_training(self, batch_size, cache=False,test_only=False):
         # Cache if dataset fits in memory or to cache it to specified files
         if cache:
             if isinstance(cache, str):
                 #dataset will be cached into the specified file
-                self.train_ds = self.train_ds.cache(cache) 
-                self.vali_ds = self.vali_ds.cache(cache)
+                if not test_only:
+                    self.train_ds = self.train_ds.cache(cache) 
+                    self.vali_ds = self.vali_ds.cache(cache)
                 self.test_ds = self.test_ds.cache(cache)
             else:
                 #dataset will be cached in memory
-                self.train_ds = self.train_ds.cache()
-                self.vali_ds = self.vali_ds.cache()
+                if not test_only:
+                    self.train_ds = self.train_ds.cache()
+                    self.vali_ds = self.vali_ds.cache()
                 self.test_ds = self.test_ds.cache()
 
-        self.train_ds = self.train_ds.batch(batch_size)
-        self.vali_ds = self.vali_ds.batch(batch_size)
+        if not test_only:
+            self.train_ds = self.train_ds.batch(batch_size)
+            self.vali_ds = self.vali_ds.batch(batch_size)
         self.test_ds = self.test_ds.batch(batch_size)
 
-        self.train_ds = self.train_ds.prefetch(buffer_size=self.autotune)
-        self.vali_ds = self.vali_ds.prefetch(buffer_size=self.autotune)
+        if not test_only:
+            self.train_ds = self.train_ds.prefetch(buffer_size=self.autotune)
+            self.vali_ds = self.vali_ds.prefetch(buffer_size=self.autotune)
         self.test_ds = self.test_ds.prefetch(buffer_size=self.autotune)
-
+        
+        if test_only:
+            return self.test_ds
         return self.train_ds, self.vali_ds, self.test_ds
