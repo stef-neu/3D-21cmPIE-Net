@@ -40,6 +40,12 @@ class Model():
         test_scores = self.model.evaluate(test_data)
         print("Test loss: " + str(test_scores))
         return self.model
+    
+    def eval_model(self, test_data):
+        print("Evaluating test scores")
+        test_scores = self.model.evaluate(test_data)
+        print("Test loss: " + str(test_scores))
+        return self.model
 
     def save_model(self, location):
         self.model.save(location)
