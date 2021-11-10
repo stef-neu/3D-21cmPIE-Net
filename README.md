@@ -51,14 +51,21 @@ Usage
     ```
     Folders 'simulations/output' and 'simulations/_cache' are created. 
     
-A. Train the 3D CNN on bare simulations:
+A. Evaluate a pre-trained 3D CNN on bare simulations:
+   - E.g. evaluate the 3D CNN trained on bare simulations in `paper_results`. By default this evaluates the 3D CNN on all output files from runSimulations.py.
+       ```
+       cd 3DCNN
+       python evalCNN.py [options] ../paper_results/3d_sim_6par/models/3D_21cmPIE_Net
+       ```
+    
+B. Train the 3D CNN on bare simulations:
    - Train the neural network in `3DCNN`. By default this takes all output files from runSimulations.py as input.
        ```
        cd 3DCNN
        python trainCNN.py [options] [epochs]
        ```
         
-B: Train the 3D CNN on opt mocks:
+C. Train the 3D CNN on opt mocks:
   - Create opt mocks in `mock_creation`.
     ```
     python create_mocks.py [options]
