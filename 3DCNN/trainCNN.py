@@ -22,7 +22,6 @@ if __name__ == "__main__":
     if isinstance(N_epochs,int)==False:
         N_epochs = 2
         print('N_epochs was not given, setting to default 2')
-        continue
     # Read in the dataset
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction

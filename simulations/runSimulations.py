@@ -36,7 +36,6 @@ recalculate_redshifts = False # The redshifts associated with each box depend on
 if isinstance(N_lc,int)==False:
    N_lc = 2
    print('N_lightcones was not given, setting to default 2')
-   continue
 
 if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
