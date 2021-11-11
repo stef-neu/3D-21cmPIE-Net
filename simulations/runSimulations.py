@@ -31,7 +31,12 @@ p21c.inputs.global_params.P_CUTOFF = not opts.ao # CDM universe for astro-only d
 height_dim = 140 # Number of pixels
 box_len = 200 # Box size in Mpc
 z_min = 5.0 # lowest redshift box
+N_lc = int(args[0])
 recalculate_redshifts = False # The redshifts associated with each box depend on the light-cone parameters, (e.g. box_len, height_dim, array of redshifts). For the given settings they are stored in redshifts5.npy
+if isinstance(N_lc,int)==False:
+   N_lc = 2
+   print('N_lightcones was not given, setting to default 2')
+   continue
 
 if not recalculate_redshifts:
    with open("redshifts5.npy","rb") as data:
@@ -54,7 +59,7 @@ else:
 
 j=0
 os.makedirs("_cache", exist_ok=True)
-while j<int(args[0]):
+while j<N_lc:
    # Cleanup
    cache_tools.clear_cache(direc="_cache")
    startTime = time.time()

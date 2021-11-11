@@ -4,7 +4,7 @@ import ReadData, Model, Plotting
 import shutil, optparse, sys
 
 o = optparse.OptionParser()
-o.set_usage('trainCNN.py [options] [epochs]')
+o.set_usage('trainCNN.py [options] [N_epochs]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per light-cone")
@@ -18,6 +18,11 @@ o.add_option('--continue', dest='cont', default=False, action="store_true",
 opts, args = o.parse_args(sys.argv[1:])
 
 if __name__ == "__main__":
+    N_epochs = int(args[0])
+    if isinstance(N_epochs,int)==False:
+        N_epochs = 2
+        print('N_epochs was not given, setting to default 2')
+        continue
     # Read in the dataset
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction
@@ -48,7 +53,7 @@ if __name__ == "__main__":
     model_handler.fit_model(
         training_data=train_ds,
         test_data=test_ds,
-        epochs=int(args[0]),
+        epochs=N_epochs,
         callbacks=[tensorboard_callback, early_stop_callback,plateau_callback],
         validation_data=vali_ds,
         )
