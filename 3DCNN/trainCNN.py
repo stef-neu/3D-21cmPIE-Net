@@ -18,10 +18,11 @@ o.add_option('--continue', dest='cont', default=False, action="store_true",
 opts, args = o.parse_args(sys.argv[1:])
 
 if __name__ == "__main__":
-    N_epochs = int(args[0])
-    if isinstance(N_epochs,int)==False:
+    if len(args)<1:
         N_epochs = 2
         print('N_epochs was not given, setting to default 2')
+    else:
+        N_epochs = int(args[0])
     # Read in the dataset
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction
