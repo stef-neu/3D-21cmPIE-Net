@@ -4,7 +4,7 @@ import ReadData, Model, Plotting
 import optparse, sys
 
 o = optparse.OptionParser()
-o.set_usage('runCNN.py [options] [NN directory]')
+o.set_usage('runCNN.py [options] [NN_directory]')
 
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per light-cone")
@@ -24,7 +24,12 @@ if __name__ == "__main__":
 
     # Create a new neural network model or load a pretrained one
     model_handler=Model.Model(shape=(height_dim,height_dim,lc_dim,1))
-    model=model_handler.load_model(args[0])
+    if len(args)<1:
+        model_directory="../paper_results/3d_sim_6par/models/3D_21cmPIE_Net"
+        print('N_directory was not given, setting to default ../paper_results/3d_sim_6par/models/3D_21cmPIE_Net')
+    else:
+        model_directory=args[0]
+    model=model_handler.load_model(model_directory)
 
     # Evaluate the provided test-set
     model_handler.eval_model(test_ds)
