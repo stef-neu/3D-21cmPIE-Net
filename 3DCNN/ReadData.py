@@ -5,6 +5,7 @@ import glob
 class ReadData():
     def __init__(self, x,y,z,apply_filter=False, astro_only=False):
         # Setup
+        assert all(isinstance(i,int) for i in  [x,y,z]), "Please provide the light-cone coordinates as integers"
         self.height=x
         self.width=y
         self.img_length=z
@@ -25,7 +26,7 @@ class ReadData():
         }
         parsed_features = tf.io.parse_example(files, keys_to_features)
         image = tf.io.decode_raw(parsed_features["image"],tf.float16)
-        image = tf.reshape(image,(self.height,self.width,self.img_length)) # CH: before hard-coded (140,140,2350), maybe make sure that's int()
+        image = tf.reshape(image,(self.height,self.width,self.img_length))
         if not self.apply_filter or (parsed_features["gxH"][0]<0.1 and parsed_features["tau"]<0.089):
             return image[0:self.height,0:self.width,0:self.img_length]/1250., tf.stack([(parsed_features["label"][0]-.3)/9.7,(parsed_features["label"][1]-.2)*5.,(parsed_features["label"][2]-38.)/4.,(parsed_features["label"][3]-100.)/1400.,(parsed_features["label"][4]-4.)/1.3,(parsed_features["label"][5]-10.)/240.],axis=-1) # m_WDM, Omega_m, L_X, E_0, T_vir, zeta
         else:
@@ -72,13 +73,13 @@ class ReadData():
         # Cache if dataset fits in memory or to cache it to specified files
         if cache:
             if isinstance(cache, str):
-                #dataset will be cached into the specified file
+                # Dataset will be cached into the specified file
                 if not test_only:
                     self.train_ds = self.train_ds.cache(cache) 
                     self.vali_ds = self.vali_ds.cache(cache)
                 self.test_ds = self.test_ds.cache(cache)
             else:
-                #dataset will be cached in memory
+                # Dataset will be cached in memory
                 if not test_only:
                     self.train_ds = self.train_ds.cache()
                     self.vali_ds = self.vali_ds.cache()
