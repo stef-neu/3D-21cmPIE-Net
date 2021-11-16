@@ -1,4 +1,4 @@
-Convert tfrecords files matching the given file pattern to npz files with
+Convert tfrecord files matching the given file pattern to npz files with
   ```
   python ConvertToNumpy.py [options] --data=[file pattern]
   ```
