@@ -9,6 +9,9 @@ o.set_usage('trainCNN.py [options] [N_epochs]')
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per light-cone")
 
+o.add_option('--meanAverage', dest='ma', default=False, action="store_true",
+             help="Train and test on the mean averaged dataset.")
+
 o.add_option('--data', dest='data', default="../simulations/output/*.tfrecord",
              help="File pattern for the light-cone files")
 
@@ -27,7 +30,7 @@ if __name__ == "__main__":
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction
     # CH test: dims can be changed, load dims from lc?
-    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao)
+    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao,mean_average=opts.ma)
     rd.read(opts.data)
     train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=8,cache=False)
 
