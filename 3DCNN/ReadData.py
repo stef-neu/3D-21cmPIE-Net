@@ -3,7 +3,7 @@ import numpy as np
 import glob
 
 class ReadData():
-    def __init__(self, x,y,z,apply_filter=False, astro_only=False):
+    def __init__(self, x,y,z,apply_filter=False, astro_only=False,mean_average=False):
         # Setup
         assert all(isinstance(i,int) for i in  [x,y,z]), "Please provide the light-cone coordinates as integers"
         self.height=x
@@ -11,6 +11,7 @@ class ReadData():
         self.img_length=z
         self.autotune=tf.data.experimental.AUTOTUNE
         self.apply_filter=apply_filter
+        self.mean_average=mean_average
         if astro_only:
             self.paras=4
         else:
@@ -27,10 +28,21 @@ class ReadData():
         parsed_features = tf.io.parse_example(files, keys_to_features)
         image = tf.io.decode_raw(parsed_features["image"],tf.float16)
         image = tf.reshape(image,(self.height,self.width,self.img_length))
-        if not self.apply_filter or (parsed_features["gxH"][0]<0.1 and parsed_features["tau"]<0.089):
-            return image[0:self.height,0:self.width,0:self.img_length]/1250., tf.stack([(parsed_features["label"][0]-.3)/9.7,(parsed_features["label"][1]-.2)*5.,(parsed_features["label"][2]-38.)/4.,(parsed_features["label"][3]-100.)/1400.,(parsed_features["label"][4]-4.)/1.3,(parsed_features["label"][5]-10.)/240.],axis=-1) # m_WDM, Omega_m, L_X, E_0, T_vir, zeta
+        if self.mean_average:
+            mean = tf.math.reduce_mean(image,0,keepdims=True)
+            mean = tf.math.reduce_mean(mean,1,keepdims=True)
+            norm = tf.math.reduce_max(image-mean)-tf.math.reduce_min(image-mean)
         else:
-            return image[0:self.height,0:self.width,0:self.img_length], tf.stack([5.,5.,5.,5.,5.,5.])
+            mean = 0.
+            norm = 1250.
+        if not self.apply_filter or (parsed_features["gxH"][0]<0.1 and parsed_features["tau"]<0.089):
+            if self.paras==6:
+                return (image[0:self.height,0:self.width,0:self.img_length]-mean)/norm, tf.stack([(parsed_features["label"][0]-.3)/9.7,(parsed_features["label"][1]-.2)*5.,(parsed_features["label"][2]-38.)/4.,(parsed_features["label"][3]-100.)/1400.,(parsed_features["label"][4]-4.)/1.3,(parsed_features["label"][5]-10.)/240.],axis=-1) # m_WDM, Omega_m, L_X, E_0, T_vir, zeta
+            elif self.paras==4:
+                return (image[0:self.height,0:self.width,0:self.img_length]-mean)/norm, tf.stack([(parsed_features["label"][0]-38.)/4.,(parsed_features["label"][1]-100.)/1400.,(parsed_features["label"][2]-4.)/1.3,(parsed_features["label"][3]-10.)/240.],axis=-1) # L_X, E_0, T_vir, zeta
+    
+        else:
+            return image[0:self.height,0:self.width,0:self.img_length], tf.stack([5.]*self.paras)
       
     def read(self,path,test_path=False,test_only=False):
         # Read in all files matching the given pattern.
