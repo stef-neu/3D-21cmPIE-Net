@@ -9,6 +9,9 @@ o.set_usage('runCNN.py [options] [NN_directory]')
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per light-cone")
 
+o.add_option('--meanAverage', dest='ma', default=False, action="store_true",
+             help="Evaluate on a mean averaged dataset.")
+
 o.add_option('--data', dest='data', default="../simulations/output/*.tfrecord",
              help="File pattern for the light-cone files")
 
@@ -18,7 +21,7 @@ if __name__ == "__main__":
     # Read in the dataset
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction
-    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao)
+    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao,mean_average=opts.ma)
     rd.read(opts.data,test_only=True)
     test_ds=rd.prepare_for_training(batch_size=8,cache=False,test_only=True)
 
