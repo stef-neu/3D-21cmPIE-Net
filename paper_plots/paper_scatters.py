@@ -20,7 +20,7 @@ def plot(filename,origin,cbar=False,axis_hists=False,inlet_diagram=False,vmin=0,
             pred3 = data["test_pred"]
 
     # Define the name, parameter range and latex code for each parameter
-    parameters=[["WDM",0.3,10,"$m_{WDM}$",2,"$_{m_{WDM}(<1.8)}=$"],["OMm",0.2,0.4,"$\Omega_m$",4,"$_{\Omega_m}$"],["LX",38,42,"$L_X$",2,"$_{L_X}$"],["E0",100,1500,"$E_0$",0,"$_{E_0 (<800)}=$"],["Tvir",4,5.3,"$T_{vir}$",2,"$_{T_{vir}}$"],["Zeta",10,250,"$\zeta$",1,"$_{\zeta}$"]]
+    parameters=[["WDM",0.3,10,"$m_{WDM}$",2,"$_{m_{WDM}(<1.8)}$"],["OMm",0.2,0.4,"$\Omega_m$",4,"$_{\Omega_m}$"],["LX",38,42,"$L_X$",2,"$_{L_X}$"],["E0",100,1500,"$E_0$",0,"$_{E_0 (<800)}$"],["Tvir",4,5.3,"$T_{vir}$",2,"$_{T_{vir}}$"],["Zeta",10,250,"$\zeta$",1,"$_{\zeta}$"]]
 
     # Revert parameter normalizations to the [0,1] range
     for para in range(6):
