@@ -35,12 +35,11 @@ class ReadData():
         else:
             mean = 0.
             norm = 1250.
-        if not self.apply_filter or (parsed_features["gxH"][0]<0.1 and parsed_features["tau"]<0.089):
-            if self.paras==6:
-                return (image[0:self.height,0:self.width,0:self.img_length]-mean)/norm, tf.stack([(parsed_features["label"][0]-.3)/9.7,(parsed_features["label"][1]-.2)*5.,(parsed_features["label"][2]-38.)/4.,(parsed_features["label"][3]-100.)/1400.,(parsed_features["label"][4]-4.)/1.3,(parsed_features["label"][5]-10.)/240.],axis=-1) # m_WDM, Omega_m, L_X, E_0, T_vir, zeta
-            elif self.paras==4:
-                return (image[0:self.height,0:self.width,0:self.img_length]-mean)/norm, tf.stack([(parsed_features["label"][0]-38.)/4.,(parsed_features["label"][1]-100.)/1400.,(parsed_features["label"][2]-4.)/1.3,(parsed_features["label"][3]-10.)/240.],axis=-1) # L_X, E_0, T_vir, zeta
-    
+        #if not self.apply_filter or (parsed_features["gxH"][0]<0.1 and parsed_features["tau"]<0.089):
+        if self.paras==6:
+            return (image[0:self.height,0:self.width,0:self.img_length]-mean)/norm, tf.stack([(parsed_features["label"][0]-.3)/9.7,(parsed_features["label"][1]-.2)*5.,(parsed_features["label"][2]-38.)/4.,(parsed_features["label"][3]-100.)/1400.,(parsed_features["label"][4]-4.)/1.3,(parsed_features["label"][5]-10.)/240.],axis=-1) # m_WDM, Omega_m, L_X, E_0, T_vir, zeta
+        elif self.paras==4:
+            return (image[0:self.height,0:self.width,0:self.img_length]-mean)/norm, tf.stack([(parsed_features["label"][0]-38.)/4.,(parsed_features["label"][1]-100.)/1400.,(parsed_features["label"][2]-4.)/1.3,(parsed_features["label"][3]-10.)/240.],axis=-1) # L_X, E_0, T_vir, zeta
         else:
             return image[0:self.height,0:self.width,0:self.img_length], tf.stack([5.]*self.paras)
       
