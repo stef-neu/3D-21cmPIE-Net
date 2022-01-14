@@ -9,6 +9,9 @@ o.set_usage('trainCNN.py [options] [N_epochs]')
 o.add_option('--astroOnly', dest='ao', default=False, action="store_true",
              help="If true, assumes an astro-only dataset with 4 labels per light-cone")
 
+o.add_option('--meanAverage', dest='ma', default=False, action="store_true",
+             help="Train and test on the mean averaged dataset.")
+
 o.add_option('--data', dest='data', default="../simulations/output/*.tfrecord",
              help="File pattern for the light-cone files")
 
@@ -18,14 +21,16 @@ o.add_option('--continue', dest='cont', default=False, action="store_true",
 opts, args = o.parse_args(sys.argv[1:])
 
 if __name__ == "__main__":
-    N_epochs = int(args[0])
-    if isinstance(N_epochs,int)==False:
+    if len(args)<1:
         N_epochs = 2
         print('N_epochs was not given, setting to default 2')
+    else:
+        N_epochs = int(args[0])
     # Read in the dataset
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction
-    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao)
+    # CH test: dims can be changed, load dims from lc?
+    rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao,mean_average=opts.ma)
     rd.read(opts.data)
     train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=1,cache=False)
 
