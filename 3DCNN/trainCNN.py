@@ -29,7 +29,6 @@ if __name__ == "__main__":
     # Read in the dataset
     height_dim = 140 # spatial pixels 
     lc_dim = 2350 # pixel in frequency direction
-    # CH test: dims can be changed, load dims from lc?
     rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao,mean_average=opts.ma)
     rd.read(opts.data)
     train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=1,cache=False)
