@@ -31,7 +31,7 @@ if __name__ == "__main__":
     lc_dim = 2350 # pixel in frequency direction
     rd=ReadData.ReadData(x=height_dim,y=height_dim,z=lc_dim,astro_only=opts.ao,mean_average=opts.ma)
     rd.read(opts.data)
-    train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=1,cache=False)
+    train_ds, vali_ds, test_ds=rd.prepare_for_training(batch_size=8,cache=False)
 
     # Create a new neural network model or load a pretrained one
     model_handler=Model.Model(shape=(height_dim, height_dim, lc_dim, 1))
