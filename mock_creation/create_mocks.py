@@ -3,7 +3,7 @@ import tensorflow as tf
 import optparse, math, sys, glob, os
 import py21cmfast as p21c
 
-# The mock transformation logic of the light-cone boxes has been kindly provided by Caroline Heneka.
+# The mock transformation logic of the light-cone boxes has been kindly provided by Caroline Heneka; it is based on an analogous transformation in C-code.
 
 # Tool for efficient mock creation. Creates mocks for all light-cone files matching the pattern given by the data option and stores them in an output folder
 o = optparse.OptionParser()
