@@ -2,7 +2,9 @@
 
 '3D 21cm Parameter InfErence Network'
 
-Repository for reproducing the results from [Arxiv Link].
+Repository for reproducing the results from [arXiv:2201.07587][arXiv:2201.07587].
+
+[arXiv:2201.07587]: https://arxiv.org/abs/2201.07587
 
 3D-21cmPIE-Net is trained to jointly infer astrophysical and (warm) dark matter parameters, as well as astrophysical parameters alone, from 3D lightcones of the 21cm signal during reionization and the cosmic dawn. This repository also provides further functionalities such as an interface to 21cmFAST for lightcone creation (incl. mock observed lightcones for noise levels derived by 21cmSense), for network training and evaluation, as well as for network interpretation via saliency maps.  
 
@@ -79,8 +81,23 @@ The trained 3D CNNs and test results from the paper are stored in paper_results.
 Acknowledgements
 -----------------
 If you use any part of this repository please cite the following paper:
-```text
-[Bibtex Citation]
+```
+Accepted for publication (ref updated soon)
+@ARTICLE{2022arXiv220107587N,
+       author = {{Neutsch}, S. and {Heneka}, C. and {Br{\"u}ggen}, M.},
+        title = "{Inferring Astrophysics and Dark Matter Properties from 21cm Tomography using Deep Learning}",
+      journal = {arXiv e-prints},
+     keywords = {Astrophysics - Cosmology and Nongalactic Astrophysics, Astrophysics - Astrophysics of Galaxies, Astrophysics - Instrumentation and Methods for Astrophysics},
+         year = 2022,
+        month = jan,
+          eid = {arXiv:2201.07587},
+        pages = {arXiv:2201.07587},
+archivePrefix = {arXiv},
+       eprint = {2201.07587},
+ primaryClass = {astro-ph.CO},
+       adsurl = {https://ui.adsabs.harvard.edu/abs/2022arXiv220107587N},
+      adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
 ```
 When using `runSimulations.py`, `create_mocks.py` or `SaliencyMaps.py` please also cite both of the following papers to acknowledge [21cmFAST][21cmFAST].
     
